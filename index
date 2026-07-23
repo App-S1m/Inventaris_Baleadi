@@ -26,25 +26,18 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Styling Cetak PDF (Landscape KIB Standard dengan KOP Resmi) */
+        /* Styling Cetak PDF (Landscape KIB Standard) */
         @media print {
-            @page { size: landscape; margin: 1cm; }
-            body { background-color: white !important; font-size: 9px !important; }
+            @page { size: landscape; margin: 1.5cm; }
+            body { background-color: white !important; font-size: 10px !important; }
             .no-print, #bottom-nav, aside, header { display: none !important; }
             #data-section { display: block !important; box-shadow: none !important; padding: 0 !important; }
-            
-            /* KOP Surat Cetak */
-            .print-header { display: block !important; text-align: center; margin-bottom: 15px; border-bottom: 3px double #000; padding-bottom: 10px; }
-            .print-header h2 { font-size: 14px; font-weight: bold; text-transform: uppercase; margin: 0; }
-            .print-header h1 { font-size: 16px; font-weight: bold; text-transform: uppercase; margin: 2px 0; }
-            .print-header h3 { font-size: 13px; font-weight: bold; text-transform: uppercase; margin: 2px 0; }
-            .print-header p { font-size: 11px; margin: 2px 0; font-weight: 600; }
-
+            .print-header { display: block !important; text-align: center; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
-            th, td { border: 1px solid #000; padding: 5px; font-size: 9px; text-align: left; vertical-align: top; }
-            .print-image { max-width: 40px; max-height: 40px; display: block; margin-top: 2px; }
+            th, td { border: 1px solid #000; padding: 6px; font-size: 10px; text-align: left; vertical-align: top; }
+            .print-image { max-width: 50px; max-height: 50px; display: block; margin-top: 4px; }
             #app-container, main { height: auto !important; overflow: visible !important; }
         }
         .print-header { display: none; }
@@ -449,7 +442,7 @@
                             </div>
                         </div>
 
-                        <!-- 4. Legalitas & Dokumen -->
+                        <!-- 4. Legalitas -->
                         <div>
                             <h3 class="text-lg font-bold text-blue-800 border-b border-blue-100 pb-2 mb-4 flex items-center gap-2"><i class="fas fa-file-contract text-blue-500"></i> 4. Legalitas & Dokumen</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -697,12 +690,10 @@
                 <!-- DATA TABLE SECTION -->
                 <div id="data-section" class="section-container hidden animate-fade-in">
                     
-                    <!-- KOP SURAT RESMI CETAK PDF -->
                     <div class="print-header">
-                        <h2>PEMERINTAH DESA BALEADI</h2>
-                        <h1 id="print-kib-title">LAPORAN INVENTARIS BARANG KIB</h1>
-                        <h3 id="print-sub-title">INVENTARIS</h3>
-                        <p>KODE LOKASI: 331801.2005</p>
+                        <h1 id="print-laporan-title" class="text-2xl font-bold">Laporan Inventaris Desa Baleadi</h1>
+                        <p>Tahun Anggaran Berjalan | Dicetak pada: <span id="print-date"></span></p>
+                        <hr class="my-4 border-gray-300">
                     </div>
 
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 no-print gap-4">
@@ -916,25 +907,16 @@
             document.getElementById('data-section').classList.remove('hidden');
 
             const titleUI = document.getElementById('laporan-ui-title');
-            const printKib = document.getElementById('print-kib-title');
-            const printSub = document.getElementById('print-sub-title');
+            const titlePrint = document.getElementById('print-laporan-title');
             
             if(kategori === 'Semua') {
-                titleUI.innerText = "Semua Data Inventaris"; 
-                printKib.innerText = "LAPORAN KESELURUHAN INVENTARIS DESA";
-                printSub.innerText = "REKAPITULASI ASET DESA";
+                titleUI.innerText = "Semua Data Inventaris"; titlePrint.innerText = "Laporan Keseluruhan Inventaris Desa Baleadi";
             } else if (kategori === 'Lahan') {
-                titleUI.innerText = "Laporan Inventaris Tanah"; 
-                printKib.innerText = "LAPORAN INVENTARIS BARANG KIB A";
-                printSub.innerText = "INVENTARIS TANAH";
+                titleUI.innerText = "Laporan Inventaris Tanah"; titlePrint.innerText = "Buku Inventaris Aset Desa (KIB A) - Tanah";
             } else if (kategori === 'Bangunan') {
-                titleUI.innerText = "Laporan Gedung / Bangunan"; 
-                printKib.innerText = "LAPORAN INVENTARIS BARANG KIB C";
-                printSub.innerText = "INVENTARIS GEDUNG DAN BANGUNAN";
+                titleUI.innerText = "Laporan Gedung / Bangunan"; titlePrint.innerText = "Buku Inventaris Aset Desa (KIB C) - Gedung & Bangunan";
             } else if (kategori === 'Peralatan') {
-                titleUI.innerText = "Laporan Peralatan & Mesin"; 
-                printKib.innerText = "LAPORAN INVENTARIS BARANG KIB B";
-                printSub.innerText = "INVENTARIS PERALATAN DAN MESIN";
+                titleUI.innerText = "Laporan Peralatan & Mesin"; titlePrint.innerText = "Buku Inventaris Aset Desa (KIB B) - Peralatan & Mesin";
             }
             filterDataToTable();
         }
@@ -1118,7 +1100,7 @@
             }
         }
 
-        // --- RENDER DYNAMIC KIB TABLE WITH EDIT & VIEW PHOTO ---
+        // --- RENDER DYNAMIC TABLE WITH EDIT & VIEW PHOTO ---
         function renderTable(data) {
             const tbody = document.getElementById('table-body');
             const thead = document.getElementById('table-head');
@@ -1130,11 +1112,11 @@
             if (currentLaporanCategory === 'Semua') {
                 thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Kategori</th><th class="p-3">Nama Aset</th><th class="p-3">Kode/Register</th><th class="p-3">Kondisi</th><th class="p-3">Thn Perolehan</th><th class="p-3 text-right">Nilai/Harga (Rp)</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
             } else if (currentLaporanCategory === 'Lahan') {
-                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama/Jenis Tanah</th><th class="p-3">Kode Barang</th><th class="p-3">Register</th><th class="p-3">Luas(m²)</th><th class="p-3">Status Hak</th><th class="p-3">No. Sertifikat</th><th class="p-3">Asal Usul</th><th class="p-3">Thn</th><th class="p-3 text-right">Harga (Rp)</th><th class="p-3">Keterangan</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
+                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama/Jenis Tanah</th><th class="p-3">Kode/Reg</th><th class="p-3">Luas(m²)</th><th class="p-3">Status/Sertifikat</th><th class="p-3">Penggunaan</th><th class="p-3">Asal Usul & Thn</th><th class="p-3 text-right">Harga (Rp)</th><th class="p-3">Ket (Lokasi/Foto)</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
             } else if (currentLaporanCategory === 'Bangunan') {
-                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama Bangunan</th><th class="p-3">Kode Barang</th><th class="p-3">Register</th><th class="p-3">Kondisi</th><th class="p-3">Konstruksi</th><th class="p-3">Luas(m²)</th><th class="p-3">Alamat</th><th class="p-3">No. IMB</th><th class="p-3">Asal Usul</th><th class="p-3 text-right">Nilai (Rp)</th><th class="p-3">Keterangan</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
+                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama Bangunan</th><th class="p-3">Kode/Reg</th><th class="p-3">Kondisi & Konstruksi</th><th class="p-3">Luas & Lantai</th><th class="p-3">Alamat</th><th class="p-3">IMB & Tgl</th><th class="p-3">Asal Usul & Thn</th><th class="p-3 text-right">Nilai (Rp)</th><th class="p-3">Ket (Foto/GPS)</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
             } else if (currentLaporanCategory === 'Peralatan') {
-                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama Barang</th><th class="p-3">Kode Barang</th><th class="p-3">Register</th><th class="p-3">Merk/Tipe</th><th class="p-3">Ukuran/CC</th><th class="p-3">Bahan</th><th class="p-3">Asal Usul</th><th class="p-3">Thn Beli</th><th class="p-3 text-right">Harga (Rp)</th><th class="p-3">Kondisi</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
+                thead.innerHTML = `<tr><th class="p-3">No</th><th class="p-3">Nama Barang</th><th class="p-3">Kode/Reg</th><th class="p-3">Merk/Tipe</th><th class="p-3">Bahan/Warna/Ukuran</th><th class="p-3">No. Pabrik/Rangka/Mesin</th><th class="p-3">Asal Usul & Thn</th><th class="p-3 text-right">Harga (Rp)</th><th class="p-3">Kondisi & Lokasi</th><th class="p-3 text-center no-print">Aksi</th></tr>`;
             }
 
             if(keys.length === 0) { 
@@ -1144,6 +1126,8 @@
             keys.reverse().forEach(key => {
                 const item = data[key];
                 const formatUang = (n) => n ? new Intl.NumberFormat('id-ID').format(n) : '-';
+                
+                // Tombol view foto interaktif
                 const imgTag = item.foto ? `<div class="mt-1"><button onclick="viewPhoto('${item.foto}')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium px-2 py-1 rounded border border-emerald-200 inline-flex items-center gap-1"><i class="fas fa-image"></i> Lihat Foto</button></div>` : '-';
                 
                 const tr = document.createElement('tr');
@@ -1156,12 +1140,12 @@
                     rowHtml = `<td class="p-3">${counter++}</td><td class="p-3"><span class="px-2 py-1 rounded text-[10px] font-bold ${badge}">${item.kategori}</span></td><td class="p-3 font-bold text-gray-900">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}<br>R: ${item.register || '-'}</td><td class="p-3">${item.kondisi || '-'}</td><td class="p-3">${item.tahunPerolehan || item.tahunBuat || item.tahunBeli || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(harga)}</td>`;
                 } else if (currentLaporanCategory === 'Lahan') {
                     const gps = item.koordinat ? `<br><a href="https://maps.google.com/?q=${item.koordinat}" target="_blank" class="text-blue-500 text-[10px] hover:underline no-print"><i class="fas fa-map-marker-alt"></i> Peta</a>` : '';
-                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}</td><td class="p-3">${item.register || '-'}</td><td class="p-3">${item.luas || '-'}</td><td class="p-3">${item.kondisi || '-'}</td><td class="p-3">${item.noSertifikat || '-'}<br>${item.tglSertifikat || '-'}</td><td class="p-3">${item.asalUsul || '-'}</td><td class="p-3">${item.tahunPerolehan || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.harga)}</td><td class="p-3">${item.penggunaan || '-'}${imgTag}${gps}</td>`;
+                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}<br>R: ${item.register || '-'}</td><td class="p-3">${item.luas || '-'}</td><td class="p-3">${item.kondisi || '-'}<br>${item.noSertifikat || '-'}<br>${item.tglSertifikat || '-'}</td><td class="p-3">${item.penggunaan || '-'}</td><td class="p-3">${item.asalUsul || '-'}<br>Th: ${item.tahunPerolehan || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.harga)}</td><td class="p-3">${imgTag}${gps}</td>`;
                 } else if (currentLaporanCategory === 'Bangunan') {
                     const gpsB = item.koordinat ? `<br><a href="https://maps.google.com/?q=${item.koordinat}" target="_blank" class="text-blue-500 text-[10px] hover:underline no-print"><i class="fas fa-map-marker-alt"></i> Peta</a>` : '';
-                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}</td><td class="p-3">${item.register || '-'}</td><td class="p-3">${item.kondisi || '-'}</td><td class="p-3">${item.konstruksi || '-'}</td><td class="p-3">${item.luas || '-'} m²</td><td class="p-3">${item.alamat || '-'}</td><td class="p-3">${item.noImb || '-'}</td><td class="p-3">${item.asalUsul || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.nilai)}</td><td class="p-3">Lt: ${item.lantai || '-'}${imgTag}${gpsB}</td>`;
+                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}<br>R: ${item.register || '-'}</td><td class="p-3">${item.kondisi || '-'}<br>${item.konstruksi || '-'}</td><td class="p-3">${item.luas || '-'} m²<br>Lt: ${item.lantai || '-'}</td><td class="p-3">${item.alamat || '-'}</td><td class="p-3">${item.noImb || '-'}<br>${item.tglImb || '-'}</td><td class="p-3">${item.asalUsul || '-'}<br>Buat: ${item.tahunBuat || '-'}<br>Beli: ${item.tahunBeli || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.nilai)}</td><td class="p-3">${imgTag}${gpsB}</td>`;
                 } else if (currentLaporanCategory === 'Peralatan') {
-                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}</td><td class="p-3">${item.register || '-'}</td><td class="p-3">${item.merk || '-'}</td><td class="p-3">${item.ukuran || '-'}</td><td class="p-3">${item.bahan || '-'}</td><td class="p-3">${item.asalUsul || '-'}</td><td class="p-3">${item.tahunBeli || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.harga)}</td><td class="p-3">${item.kondisi || '-'}<br>${imgTag}</td>`;
+                    rowHtml = `<td class="p-3">${counter++}</td><td class="p-3 font-bold">${item.nama || '-'}</td><td class="p-3">${item.kodeBarang || '-'}<br>R: ${item.register || '-'}</td><td class="p-3">${item.merk || '-'}</td><td class="p-3">Bhn: ${item.bahan || '-'}<br>Wrn: ${item.warna || '-'}<br>Ukr: ${item.ukuran || '-'}</td><td class="p-3">Rngk: ${item.noRangka || '-'}<br>Msn: ${item.noMesin || '-'}</td><td class="p-3">${item.asalUsul || '-'}<br>Buat: ${item.tahunBuat || '-'}<br>Beli: ${item.tahunBeli || '-'}</td><td class="p-3 text-right font-semibold">${formatUang(item.harga)}</td><td class="p-3">${item.kondisi || '-'}<br>Lok: ${item.lokasi || '-'}<br>${imgTag}</td>`;
                 }
 
                 // Tombol Edit & Delete
@@ -1218,6 +1202,7 @@
 
         // --- PRINT PDF ---
         function printLaporan() {
+            document.getElementById('print-date').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             window.print();
         }
 
@@ -1244,20 +1229,23 @@
                 } else if (currentLaporanCategory === 'Lahan') {
                     exportData.push({
                         "No": counter++, "Nama/Jenis Tanah": item.nama || '-', "Kode Barang": item.kodeBarang || '-', "Register": item.register || '-',
-                        "Luas (m2)": Number(item.luas) || 0, "Status Hak": item.kondisi || '-', "No Sertifikat": item.noSertifikat || '-',
-                        "Asal Usul": item.asalUsul || '-', "Tahun Perolehan": item.tahunPerolehan || '-', "Harga (Rp)": Number(item.harga) || 0, "Penggunaan": item.penggunaan || '-'
+                        "Luas (m2)": Number(item.luas) || 0, "Tahun Perolehan": item.tahunPerolehan || '-', "Batas Lokasi": item.batas || '-',
+                        "Status Hak": item.kondisi || '-', "No Sertifikat": item.noSertifikat || '-', "Tgl Sertifikat": item.tglSertifikat || '-',
+                        "Penggunaan": item.penggunaan || '-', "Asal Usul": item.asalUsul || '-', "Harga (Rp)": Number(item.harga) || 0, "Koordinat": item.koordinat || '-'
                     });
                 } else if (currentLaporanCategory === 'Bangunan') {
                     exportData.push({
                         "No": counter++, "Nama Bangunan": item.nama || '-', "Kode Barang": item.kodeBarang || '-', "Register": item.register || '-',
-                        "Kondisi": item.kondisi || '-', "Konstruksi": item.konstruksi || '-', "Luas Lantai (m2)": Number(item.luas) || 0,
-                        "Alamat": item.alamat || '-', "No IMB": item.noImb || '-', "Asal Usul": item.asalUsul || '-', "Nilai (Rp)": Number(item.nilai) || 0
+                        "Kondisi": item.kondisi || '-', "Konstruksi": item.konstruksi || '-', "Luas (m2)": Number(item.luas) || 0, "Lantai": Number(item.lantai) || 0,
+                        "Alamat": item.alamat || '-', "Nomor IMB": item.noImb || '-', "Tgl IMB": item.tglImb || '-', "Asal Usul": item.asalUsul || '-',
+                        "Tahun Buat": item.tahunBuat || '-', "Tahun Beli": item.tahunBeli || '-', "Nilai (Rp)": Number(item.nilai) || 0, "Koordinat": item.koordinat || '-'
                     });
                 } else if (currentLaporanCategory === 'Peralatan') {
                     exportData.push({
                         "No": counter++, "Nama Barang": item.nama || '-', "Kode Barang": item.kodeBarang || '-', "Register": item.register || '-',
-                        "Merk/Tipe": item.merk || '-', "Ukuran/CC": item.ukuran || '-', "Bahan": item.bahan || '-', "Asal Usul": item.asalUsul || '-',
-                        "Tahun Beli": item.tahunBeli || '-', "Harga (Rp)": Number(item.harga) || 0, "Kondisi": item.kondisi || '-'
+                        "Merk/Tipe": item.merk || '-', "Bahan": item.bahan || '-', "Warna": item.warna || '-', "Ukuran": item.ukuran || '-',
+                        "No Rangka": item.noRangka || '-', "No Mesin": item.noMesin || '-', "Asal Usul": item.asalUsul || '-', "Tahun Buat": item.tahunBuat || '-',
+                        "Tahun Beli": item.tahunBeli || '-', "Kondisi": item.kondisi || '-', "Lokasi/Penanggung Jawab": item.lokasi || '-', "Harga (Rp)": Number(item.harga) || 0
                     });
                 }
             });
@@ -1286,4 +1274,3 @@
     </script>
 </body>
 </html>
-```eof

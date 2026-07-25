@@ -804,7 +804,7 @@
 
     <script>
         // URL Apps Script dari Tahap 2 (Ganti dengan URL Deploy GAS milikmu)
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbx9QBoZznDVamgz28rAXfqScPhVfDoOHx9IP6yHIe916MQAbBzM1EZI3zM0VLLiHucR/exec'; 
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzHyge5VpnYnVk5SjoQ9LRF-M3sVdkZ3zmX6usAFgNIEY2w3lnOZo4LVoVUXHCt-_Bs/exec'; 
         
         let inventoryData = {}; 
         let currentLaporanCategory = 'Semua';
@@ -1048,7 +1048,7 @@
 
         async function submitData(e, kategori) {
             e.preventDefault();
-            if(GAS_URL === 'https://script.google.com/macros/s/AKfycbx9QBoZznDVamgz28rAXfqScPhVfDoOHx9IP6yHIe916MQAbBzM1EZI3zM0VLLiHucR/exec' || !GAS_URL.startsWith('http')) { 
+            if(GAS_URL === 'URL_WEB_APP_GAS_ANDA_DISINI' || !GAS_URL.startsWith('http')) { 
                 showToast('Sistem dlm mode Simulasi UI. Silakan hubungkan GAS.', 'warning'); 
                 return; 
             }
@@ -1137,7 +1137,7 @@
         }
 
         async function fetchData() {
-            if(GAS_URL === 'https://script.google.com/macros/s/AKfycbx9QBoZznDVamgz28rAXfqScPhVfDoOHx9IP6yHIe916MQAbBzM1EZI3zM0VLLiHucR/exec' || !GAS_URL.startsWith('http')) { 
+            if(GAS_URL === 'URL_WEB_APP_GAS_ANDA_DISINI' || !GAS_URL.startsWith('http')) { 
                 document.getElementById('table-body').innerHTML = `<tr><td colspan="15" class="p-8 text-center text-amber-600 font-bold bg-amber-50 rounded-xl">Demo UI Aktif: Silakan set GAS_URL di kode sumber untuk sinkronisasi nyata.</td></tr>`;
                 return; 
             }

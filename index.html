@@ -32,12 +32,14 @@
             @page { size: landscape; margin: 1cm; }
             body { background-color: white !important; font-size: 10px !important; }
             .no-print, #bottom-nav, aside, header { display: none !important; }
-            #data-section { display: block !important; box-shadow: none !important; padding: 0 !important; }
+            .section-container { display: none !important; }
+            .section-container:not(.hidden) { display: block !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; margin: 0 !important; }
             .print-header { display: block !important; text-align: center; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; page-break-inside: auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
             th, td { border: 1px solid #000; padding: 6px; font-size: 10px; text-align: left; vertical-align: top; }
+            #detail-print-area td { font-size: 12px; padding: 8px; }
             .print-image { max-width: 50px; max-height: 50px; display: block; margin-top: 4px; }
             #app-container, main { height: auto !important; overflow: visible !important; }
         }
@@ -148,7 +150,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 bg-gray-50 flex flex-col h-full relative overflow-y-auto pb-24 md:pb-0">
+        <!-- PERBAIKAN: Menghapus pb-24 dari main, memindahkannya ke div kontainer dalam -->
+        <main class="flex-1 bg-gray-50 flex flex-col h-full relative overflow-y-auto">
             
             <!-- Header Mobile Saja -->
             <header class="md:hidden bg-emerald-800 text-white p-4 flex justify-between items-center shadow-md sticky top-0 z-10 no-print">
@@ -161,7 +164,8 @@
                 </button>
             </header>
 
-            <div class="p-4 md:p-8 w-full max-w-6xl mx-auto">
+            <!-- PERBAIKAN: Menambahkan pb-32 (Padding Bottom ekstra besar) agar konten tidak tertutup bottom nav di HP -->
+            <div class="p-4 md:p-8 w-full max-w-6xl mx-auto pb-36 md:pb-12">
                 
                 <div id="dashboard-section" class="section-container animate-fade-in">
                     <div class="mb-8">
@@ -239,217 +243,248 @@
                         </div>
                     </div>
 
-                    <form onsubmit="submitData(event, 'Lahan')" id="form-tanah" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-10 relative overflow-hidden">
+                    <form onsubmit="submitData(event, 'Lahan')" id="form-tanah" class="bg-gray-50/50 p-3 md:p-6 rounded-3xl border border-gray-100 space-y-6 relative overflow-hidden">
                         <!-- Ornamen Latar -->
-                        <div class="absolute -top-10 -right-10 text-emerald-50 opacity-50 pointer-events-none"><i class="fas fa-map-marked-alt text-[200px]"></i></div>
+                        <div class="absolute -top-10 -right-10 text-emerald-500/5 pointer-events-none"><i class="fas fa-map-marked-alt text-[250px]"></i></div>
                         
                         <input type="hidden" id="t-id">
                         
                         <!-- 1. Identitas Aset -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-emerald-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-id-card text-emerald-500"></i> 1. Identitas Aset</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Tanah <span class="text-red-500">*</span></label>
-                                    <input type="text" id="t-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: Tanah Lapangan">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Jenis Tanah <span class="text-red-500">*</span></label>
-                                    <select id="t-jenis" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
-                                        <option value="Tanah Kas Desa (TKD)">Tanah Kas Desa (TKD)</option>
-                                        <option value="Tanah Bengkok">Tanah Bengkok</option>
-                                        <option value="Fasilitas Umum">Fasilitas Umum</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Alamat / Lokasi <span class="text-red-500">*</span></label>
-                                    <input type="text" id="t-alamat" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Dusun / RT / RW / Persil">
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-emerald-300 transition-all duration-300">
+                            <div class="bg-emerald-50/80 border-b border-emerald-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-id-card text-emerald-600 text-lg"></i> 1. Identitas Aset</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode Barang</label>
-                                    <input type="text" id="t-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="01.01.11.xx">
+                            <div class="p-5 space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Tanah <span class="text-red-500">*</span></label>
+                                        <input type="text" id="t-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: Tanah Lapangan">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Jenis Tanah <span class="text-red-500">*</span></label>
+                                        <select id="t-jenis" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
+                                            <option value="Tanah Kas Desa (TKD)">Tanah Kas Desa (TKD)</option>
+                                            <option value="Tanah Bengkok">Tanah Bengkok</option>
+                                            <option value="Fasilitas Umum">Fasilitas Umum</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Alamat / Lokasi <span class="text-red-500">*</span></label>
+                                        <input type="text" id="t-alamat" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Dusun / RT / RW / Persil">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
-                                    <input type="text" id="t-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode Barang</label>
+                                        <input type="text" id="t-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="01.01.11.xx">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
+                                        <input type="text" id="t-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 2. Spesifikasi Fisik (Multiple Uploads) -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-emerald-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-layer-group text-emerald-500"></i> 2. Spesifikasi Fisik</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Awal (m²) <span class="text-red-500">*</span></label>
-                                    <input type="number" id="t-luas" required class="w-full p-3.5 mb-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium" placeholder="Contoh: 1500">
-                                    <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Luas (SPPT / Lainya)</label>
-                                    <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-sppt-preview', 't-sppt-placeholder', 't-sppt-base64')">
-                                        <div id="t-sppt-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                            <i class="fas fa-file-upload text-xl mb-1"></i>
-                                            <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto SPPT</span>
-                                        </div>
-                                        <img id="t-sppt-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="t-sppt-base64">
-                                    </div>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Sekarang (m²)</label>
-                                    <input type="number" id="t-luas-sekarang" class="w-full p-3.5 mb-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium" placeholder="Hasil Ukur Baru">
-                                    <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Gambar Hasil Pengukuran</label>
-                                    <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-ukur-preview', 't-ukur-placeholder', 't-ukur-base64')">
-                                        <div id="t-ukur-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                            <i class="fas fa-file-upload text-xl mb-1"></i>
-                                            <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto Hasil Ukur</span>
-                                        </div>
-                                        <img id="t-ukur-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="t-ukur-base64">
-                                    </div>
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-emerald-300 transition-all duration-300">
+                            <div class="bg-emerald-50/80 border-b border-emerald-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-layer-group text-emerald-600 text-lg"></i> 2. Spesifikasi Fisik</h3>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
-                                <label class="block text-sm font-bold text-gray-700 mb-3">Batas-Batas Lokasi</label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">U</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Utara</span></div>
-                                        <input type="text" id="t-batas-utara" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Utara...">
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Awal (m²) <span class="text-red-500">*</span></label>
+                                        <input type="number" id="t-luas" required class="w-full p-3.5 mb-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium" placeholder="Contoh: 1500">
+                                        <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Luas (SPPT / Lainya)</label>
+                                        <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-sppt-preview', 't-sppt-placeholder', 't-sppt-base64')">
+                                            <div id="t-sppt-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-file-upload text-xl mb-1"></i>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto SPPT</span>
+                                            </div>
+                                            <img id="t-sppt-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="t-sppt-base64">
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">S</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Selatan</span></div>
-                                        <input type="text" id="t-batas-selatan" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Selatan...">
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">T</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Timur</span></div>
-                                        <input type="text" id="t-batas-timur" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Timur...">
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">B</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Barat</span></div>
-                                        <input type="text" id="t-batas-barat" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Barat...">
+                                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Sekarang (m²)</label>
+                                        <input type="number" id="t-luas-sekarang" class="w-full p-3.5 mb-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium" placeholder="Hasil Ukur Baru">
+                                        <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Gambar Hasil Pengukuran</label>
+                                        <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-ukur-preview', 't-ukur-placeholder', 't-ukur-base64')">
+                                            <div id="t-ukur-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-file-upload text-xl mb-1"></i>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto Hasil Ukur</span>
+                                            </div>
+                                            <img id="t-ukur-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="t-ukur-base64">
+                                        </div>
                                     </div>
                                 </div>
-                                <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Gambar Batas Lokasi</label>
-                                <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden w-full md:w-1/2">
-                                    <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-batas-preview', 't-batas-placeholder', 't-batas-base64')">
-                                    <div id="t-batas-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                        <i class="fas fa-file-upload text-xl mb-1"></i>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto Batas</span>
+                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                                    <label class="block text-sm font-bold text-gray-700 mb-3">Batas-Batas Lokasi</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">U</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Utara</span></div>
+                                            <input type="text" id="t-batas-utara" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Utara...">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">S</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Selatan</span></div>
+                                            <input type="text" id="t-batas-selatan" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Selatan...">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">T</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Timur</span></div>
+                                            <input type="text" id="t-batas-timur" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Timur...">
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1.5"><span class="w-6 h-6 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">B</span><span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Barat</span></div>
+                                            <input type="text" id="t-batas-barat" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm font-medium" placeholder="Batas Barat...">
+                                        </div>
                                     </div>
-                                    <img id="t-batas-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                    <input type="hidden" id="t-batas-base64">
+                                    <label class="block text-xs font-bold text-gray-600 mb-2">Upload Bukti Gambar Batas Lokasi</label>
+                                    <div class="border-2 border-dashed border-emerald-200 bg-white rounded-xl p-3 text-center relative hover:bg-emerald-50 transition-colors h-24 flex items-center justify-center group overflow-hidden w-full md:w-1/2">
+                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-batas-preview', 't-batas-placeholder', 't-batas-base64')">
+                                        <div id="t-batas-placeholder" class="text-emerald-600/60 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                            <i class="fas fa-file-upload text-xl mb-1"></i>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Foto Batas</span>
+                                        </div>
+                                        <img id="t-batas-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                        <input type="hidden" id="t-batas-base64">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 3. Legalitas (Sertifikat Upload) -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-emerald-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-balance-scale text-emerald-500"></i> 3. Legalitas / Sertifikat</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Status Hak <span class="text-red-500">*</span></label>
-                                    <select id="t-status" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
-                                        <option value="Hak Milik">Hak Milik (SHM)</option>
-                                        <option value="Hak Guna Bangunan">Hak Guna Bangunan (HGB)</option>
-                                        <option value="Hak Pakai">Hak Pakai</option>
-                                        <option value="Girik/Letter C">Girik / Letter C</option>
-                                        <option value="Tanah Negara">Tanah Negara</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Dokumen</label>
-                                    <input type="text" id="t-nosertifikat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="No. Sertifikat/Letter C">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Tgl Penerbitan</label>
-                                    <input type="date" id="t-tglsertifikat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Bukti Berkas Sertifikat</label>
-                                    <div class="border-2 border-dashed border-emerald-200 bg-gray-50 rounded-xl p-2 text-center relative hover:bg-emerald-50 transition-colors h-14 flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-sertifikat-preview', 't-sertifikat-placeholder', 't-sertifikat-base64')">
-                                        <div id="t-sertifikat-placeholder" class="text-emerald-600/60 pointer-events-none flex items-center gap-2 transition-transform group-hover:scale-105">
-                                            <i class="fas fa-file-upload text-lg"></i>
-                                            <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Berkas</span>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-emerald-300 transition-all duration-300">
+                            <div class="bg-emerald-50/80 border-b border-emerald-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-balance-scale text-emerald-600 text-lg"></i> 3. Legalitas / Sertifikat</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Status Hak <span class="text-red-500">*</span></label>
+                                        <select id="t-status" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
+                                            <option value="Hak Milik">Hak Milik (SHM)</option>
+                                            <option value="Hak Guna Bangunan">Hak Guna Bangunan (HGB)</option>
+                                            <option value="Hak Pakai">Hak Pakai</option>
+                                            <option value="Girik/Letter C">Girik / Letter C</option>
+                                            <option value="Tanah Negara">Tanah Negara</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Dokumen</label>
+                                        <input type="text" id="t-nosertifikat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="No. Sertifikat/Letter C">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Tgl Penerbitan</label>
+                                        <input type="date" id="t-tglsertifikat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Bukti Berkas Sertifikat</label>
+                                        <div class="border-2 border-dashed border-emerald-200 bg-gray-50 rounded-xl p-2 text-center relative hover:bg-emerald-50 transition-colors h-14 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-sertifikat-preview', 't-sertifikat-placeholder', 't-sertifikat-base64')">
+                                            <div id="t-sertifikat-placeholder" class="text-emerald-600/60 pointer-events-none flex items-center gap-2 transition-transform group-hover:scale-105">
+                                                <i class="fas fa-file-upload text-lg"></i>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Pilih Berkas</span>
+                                            </div>
+                                            <img id="t-sertifikat-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="t-sertifikat-base64">
                                         </div>
-                                        <img id="t-sertifikat-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="t-sertifikat-base64">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 4. Administrasi -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-emerald-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-folder-open text-emerald-500"></i> 4. Administrasi</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul <span class="text-red-500">*</span></label>
-                                    <select id="t-asal" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
-                                        <option value="Pembelian">Pembelian</option>
-                                        <option value="Hibah">Hibah</option>
-                                        <option value="Tanah Kas Desa">Tanah Kas Desa (Asli)</option>
-                                        <option value="Sumbangan">Sumbangan</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Tahun Perolehan</label>
-                                    <input type="number" id="t-tahun" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Harga Perolehan (Rp)</label>
-                                    <input type="number" id="t-harga" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Penggunaan</label>
-                                    <input type="text" id="t-penggunaan" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Pertanian, Lapangan...">
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-emerald-300 transition-all duration-300">
+                            <div class="bg-emerald-50/80 border-b border-emerald-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-folder-open text-emerald-600 text-lg"></i> 4. Administrasi</h3>
                             </div>
-                        </div>
-
-                        <!-- 5. Lokasi & Media GPS Aktif -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-emerald-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-map-marker-alt text-emerald-500"></i> 5. Titik Lokasi & Visual</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Koordinat GPS</label>
-                                    <div class="flex gap-2 mb-3">
-                                        <div class="relative flex-1">
-                                            <input type="text" id="t-koordinat" readonly class="w-full p-3.5 bg-gray-100 border border-gray-300 rounded-xl pr-12 outline-none text-gray-600 font-medium" placeholder="Koordinat belum di-set">
-                                            <button type="button" onclick="copyKoordinat('t-koordinat')" class="absolute right-2 top-2 p-1.5 px-3 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors shadow-sm" title="Salin Koordinat"><i class="fas fa-copy"></i></button>
-                                        </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul <span class="text-red-500">*</span></label>
+                                        <select id="t-asal" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium">
+                                            <option value="Pembelian">Pembelian</option>
+                                            <option value="Hibah">Hibah</option>
+                                            <option value="Tanah Kas Desa">Tanah Kas Desa (Asli)</option>
+                                            <option value="Sumbangan">Sumbangan</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
                                     </div>
-                                    <div class="grid grid-cols-2 gap-2 mt-2">
-                                        <button type="button" onclick="getLocation('t-koordinat')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
-                                            <i class="fas fa-satellite"></i> Dapat GPS
-                                        </button>
-                                        <button type="button" onclick="openGoogleMaps('t-koordinat')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
-                                            <i class="fas fa-external-link-alt"></i> Buka Peta
-                                        </button>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Tahun Perolehan</label>
+                                        <input type="number" id="t-tahun" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
                                     </div>
-                                    <p class="text-[10px] text-gray-400 mt-2"><i class="fas fa-info-circle"></i> Berdiri di area lahan saat menekan tombol ini.</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Lahan (Keseluruhan)</label>
-                                    <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-4 text-center relative hover:bg-gray-100 transition-colors h-36 flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-preview', 't-placeholder', 't-base64')">
-                                        <div id="t-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                            <i class="fas fa-camera text-3xl mb-2 text-gray-400"></i>
-                                            <span class="text-xs font-bold uppercase tracking-wider">Ambil Foto Utama</span>
-                                        </div>
-                                        <img id="t-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="t-base64">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Harga Perolehan (Rp)</label>
+                                        <input type="number" id="t-harga" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Penggunaan</label>
+                                        <input type="text" id="t-penggunaan" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Pertanian, Lapangan...">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3 relative z-10">
-                            <button type="button" onclick="resetForm('tanah'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition-colors">Batal & Bersihkan</button>
+                        <!-- 5. Lokasi & Media GPS Aktif (2 Foto Lahan Ditambahkan) -->
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-emerald-300 transition-all duration-300">
+                            <div class="bg-emerald-50/80 border-b border-emerald-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-map-marker-alt text-emerald-600 text-lg"></i> 5. Titik Lokasi & Visual</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Koordinat GPS</label>
+                                        <div class="flex gap-2 mb-3">
+                                            <div class="relative flex-1">
+                                                <input type="text" id="t-koordinat" readonly class="w-full p-3.5 bg-gray-100 border border-gray-300 rounded-xl pr-12 outline-none text-gray-600 font-medium" placeholder="Koordinat belum di-set">
+                                                <button type="button" onclick="copyKoordinat('t-koordinat')" class="absolute right-2 top-2 p-1.5 px-3 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors shadow-sm" title="Salin Koordinat"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <button type="button" onclick="getLocation('t-koordinat')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
+                                                <i class="fas fa-satellite"></i> Dapat GPS
+                                            </button>
+                                            <button type="button" onclick="openGoogleMaps('t-koordinat')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
+                                                <i class="fas fa-external-link-alt"></i> Buka Peta
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Lahan 1 (Utama)</label>
+                                        <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-3 text-center relative hover:bg-gray-100 transition-colors h-32 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-preview', 't-placeholder', 't-base64')">
+                                            <div id="t-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-camera text-2xl mb-1 text-gray-400"></i>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Foto Lahan 1</span>
+                                            </div>
+                                            <img id="t-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="t-base64">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Lahan 2 (Tambahan)</label>
+                                        <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-3 text-center relative hover:bg-gray-100 transition-colors h-32 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 't-preview2', 't-placeholder2', 't-base64-2')">
+                                            <div id="t-placeholder2" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-camera text-2xl mb-1 text-gray-400"></i>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Foto Lahan 2</span>
+                                            </div>
+                                            <img id="t-preview2" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="t-base64-2">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex justify-end gap-3 relative z-10">
+                            <button type="button" onclick="resetForm('tanah'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold shadow-sm transition-colors">Batal</button>
                             <button type="submit" id="btn-t-submit" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg shadow-emerald-200 flex gap-2 items-center justify-center transition-all active:scale-95">
                                 <i class="fas fa-save"></i> Simpan KIB A
                             </button>
@@ -465,132 +500,149 @@
                             <p class="text-sm text-gray-500">Pencatatan aset fisik permanen.</p>
                         </div>
                     </div>
-                    <form onsubmit="submitData(event, 'Bangunan')" id="form-bangunan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-10 relative overflow-hidden">
-                        <div class="absolute -top-10 -right-10 text-blue-50 opacity-50 pointer-events-none"><i class="fas fa-building text-[200px]"></i></div>
+                    
+                    <form onsubmit="submitData(event, 'Bangunan')" id="form-bangunan" class="bg-gray-50/50 p-3 md:p-6 rounded-3xl border border-gray-100 space-y-6 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 text-blue-500/5 pointer-events-none"><i class="fas fa-building text-[250px]"></i></div>
                         
                         <input type="hidden" id="b-id">
                         
                         <!-- 1. Identitas Aset -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-blue-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-id-card text-blue-500"></i> 1. Identitas Aset</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Bangunan <span class="text-red-500">*</span></label>
-                                    <input type="text" id="b-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: Balai Desa Baleadi">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode Barang</label>
-                                    <input type="text" id="b-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="03.11.xx">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
-                                    <input type="text" id="b-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-blue-300 transition-all duration-300">
+                            <div class="bg-blue-50/80 border-b border-blue-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-blue-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-id-card text-blue-600 text-lg"></i> 1. Identitas Aset</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Bangunan <span class="text-red-500">*</span></label>
+                                        <input type="text" id="b-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: Balai Desa Baleadi">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode Barang</label>
+                                        <input type="text" id="b-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="03.11.xx">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
+                                        <input type="text" id="b-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 2. Spesifikasi Fisik & Teknis -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-blue-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-expand text-blue-500"></i> 2. Fisik & Teknis</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Lantai (m²) <span class="text-red-500">*</span></label>
-                                    <input type="number" id="b-luas" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: 300">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Jumlah Lantai</label>
-                                    <input type="number" id="b-lantai" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="1" min="1">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Kondisi Bangunan <span class="text-red-500">*</span></label>
-                                    <select id="b-kondisi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
-                                        <option value="Baik">Baik</option>
-                                        <option value="Kurang Baik">Kurang Baik</option>
-                                        <option value="Rusak Berat">Rusak Berat</option>
-                                    </select>
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-blue-300 transition-all duration-300">
+                            <div class="bg-blue-50/80 border-b border-blue-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-blue-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-expand text-blue-600 text-lg"></i> 2. Fisik & Teknis</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Letak / Alamat</label>
-                                    <input type="text" id="b-alamat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Jl. Raya Baleadi No...">
+                            <div class="p-5 space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Lantai (m²) <span class="text-red-500">*</span></label>
+                                        <input type="number" id="b-luas" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: 300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Jumlah Lantai</label>
+                                        <input type="number" id="b-lantai" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="1" min="1">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Kondisi Bangunan <span class="text-red-500">*</span></label>
+                                        <select id="b-kondisi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
+                                            <option value="Baik">Baik</option>
+                                            <option value="Kurang Baik">Kurang Baik</option>
+                                            <option value="Rusak Berat">Rusak Berat</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Jenis Konstruksi <span class="text-red-500">*</span></label>
-                                    <input type="text" id="b-konstruksi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Beton / Kayu / Baja...">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Letak / Alamat</label>
+                                        <input type="text" id="b-alamat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Jl. Raya Baleadi No...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Jenis Konstruksi <span class="text-red-500">*</span></label>
+                                        <input type="text" id="b-konstruksi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Beton / Kayu / Baja...">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 3. Legalitas & Administrasi -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-blue-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-file-contract text-blue-500"></i> 3. Legalitas & Administrasi</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Dokumen (IMB/PBG)</label>
-                                    <input type="text" id="b-noimb" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Nomor IMB...">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Tgl Dokumen</label>
-                                    <input type="date" id="b-tglimb" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembuatan</label>
-                                    <input type="number" id="b-tahunbuat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Perolehan</label>
-                                    <input type="number" id="b-tahunbeli" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-blue-300 transition-all duration-300">
+                            <div class="bg-blue-50/80 border-b border-blue-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-blue-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-file-contract text-blue-600 text-lg"></i> 3. Legalitas & Administrasi</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul</label>
-                                    <input type="text" id="b-asal" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="APBDes, Bantuan, dll">
+                            <div class="p-5 space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Dokumen (IMB/PBG)</label>
+                                        <input type="text" id="b-noimb" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="Nomor IMB...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Tgl Dokumen</label>
+                                        <input type="date" id="b-tglimb" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembuatan</label>
+                                        <input type="number" id="b-tahunbuat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Perolehan</label>
+                                        <input type="number" id="b-tahunbeli" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nilai Aset (Rp) <span class="text-red-500">*</span></label>
-                                    <input type="number" id="b-nilai" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul</label>
+                                        <input type="text" id="b-asal" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="APBDes, Bantuan, dll">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nilai Aset (Rp) <span class="text-red-500">*</span></label>
+                                        <input type="number" id="b-nilai" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 4. Lokasi GPS & Foto -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-blue-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-500"></i> 4. Lokasi & Visual</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Koordinat GPS</label>
-                                    <div class="relative mb-3">
-                                        <input type="text" id="b-koordinat" readonly class="w-full p-3.5 bg-gray-100 border border-gray-300 rounded-xl pr-12 outline-none text-gray-600 font-medium" placeholder="Koordinat belum di-set">
-                                        <button type="button" onclick="copyKoordinat('b-koordinat')" class="absolute right-2 top-2 p-1.5 px-3 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors shadow-sm" title="Salin Koordinat"><i class="fas fa-copy"></i></button>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-2 mt-2">
-                                        <button type="button" onclick="getLocation('b-koordinat')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
-                                            <i class="fas fa-satellite"></i> Dapat GPS
-                                        </button>
-                                        <button type="button" onclick="openGoogleMaps('b-koordinat')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
-                                            <i class="fas fa-external-link-alt"></i> Buka Peta
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Bangunan (Opsional)</label>
-                                    <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-4 text-center relative hover:bg-gray-100 transition h-32 flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'b-preview', 'b-placeholder', 'b-base64')">
-                                        <div id="b-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                            <i class="fas fa-camera text-3xl mb-2 text-gray-400"></i>
-                                            <span class="text-xs font-bold uppercase tracking-wider">Ambil Foto</span>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-blue-300 transition-all duration-300">
+                            <div class="bg-blue-50/80 border-b border-blue-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-blue-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-map-marker-alt text-blue-600 text-lg"></i> 4. Lokasi & Visual</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Koordinat GPS</label>
+                                        <div class="relative mb-3">
+                                            <input type="text" id="b-koordinat" readonly class="w-full p-3.5 bg-gray-100 border border-gray-300 rounded-xl pr-12 outline-none text-gray-600 font-medium" placeholder="Koordinat belum di-set">
+                                            <button type="button" onclick="copyKoordinat('b-koordinat')" class="absolute right-2 top-2 p-1.5 px-3 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors shadow-sm" title="Salin Koordinat"><i class="fas fa-copy"></i></button>
                                         </div>
-                                        <img id="b-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="b-base64">
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <button type="button" onclick="getLocation('b-koordinat')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
+                                                <i class="fas fa-satellite"></i> Dapat GPS
+                                            </button>
+                                            <button type="button" onclick="openGoogleMaps('b-koordinat')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2.5 rounded-xl flex items-center justify-center gap-2 font-bold transition-colors text-xs">
+                                                <i class="fas fa-external-link-alt"></i> Buka Peta
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Bangunan (Opsional)</label>
+                                        <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-4 text-center relative hover:bg-gray-100 transition h-32 flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'b-preview', 'b-placeholder', 'b-base64')">
+                                            <div id="b-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-camera text-3xl mb-2 text-gray-400"></i>
+                                                <span class="text-xs font-bold uppercase tracking-wider">Ambil Foto</span>
+                                            </div>
+                                            <img id="b-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="b-base64">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3 relative z-10">
-                            <button type="button" onclick="resetForm('bangunan'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition-colors">Batal</button>
+                        <div class="pt-2 flex justify-end gap-3 relative z-10">
+                            <button type="button" onclick="resetForm('bangunan'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold shadow-sm transition-colors">Batal</button>
                             <button type="submit" id="btn-b-submit" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-200 flex gap-2 items-center justify-center transition-all active:scale-95">
                                 <i class="fas fa-save"></i> Simpan KIB C
                             </button>
@@ -606,121 +658,138 @@
                             <p class="text-sm text-gray-500">Pencatatan perlengkapan, kendaraan, atau aset bergerak.</p>
                         </div>
                     </div>
-                    <form onsubmit="submitData(event, 'Peralatan')" id="form-peralatan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-10 relative overflow-hidden">
-                        <div class="absolute -top-10 -right-10 text-amber-50 opacity-50 pointer-events-none"><i class="fas fa-tractor text-[200px]"></i></div>
+                    
+                    <form onsubmit="submitData(event, 'Peralatan')" id="form-peralatan" class="bg-gray-50/50 p-3 md:p-6 rounded-3xl border border-gray-100 space-y-6 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 text-amber-500/5 pointer-events-none"><i class="fas fa-tractor text-[250px]"></i></div>
                         
                         <input type="hidden" id="p-id">
                         
                         <!-- 1. Identitas Aset -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-amber-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-box-open text-amber-500"></i> 1. Identitas Aset</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                                <div class="col-span-2">
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Barang <span class="text-red-500">*</span></label>
-                                    <input type="text" id="p-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Laptop / Traktor / Kursi">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Merk / Tipe <span class="text-red-500">*</span></label>
-                                    <input type="text" id="p-merk" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Asus VivoBook / Kubota">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode</label>
-                                    <input type="text" id="p-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="02.xx">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
-                                    <input type="text" id="p-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-amber-300 transition-all duration-300">
+                            <div class="bg-amber-50/80 border-b border-amber-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-amber-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-box-open text-amber-600 text-lg"></i> 1. Identitas Aset</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                                    <div class="col-span-2">
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Barang <span class="text-red-500">*</span></label>
+                                        <input type="text" id="p-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Laptop / Traktor / Kursi">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Merk / Tipe <span class="text-red-500">*</span></label>
+                                        <input type="text" id="p-merk" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Asus VivoBook / Kubota">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Kode</label>
+                                        <input type="text" id="p-kode" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="02.xx">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Register</label>
+                                        <input type="text" id="p-register" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="0001">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 2. Spesifikasi Teknis -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-amber-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-wrench text-amber-500"></i> 2. Spesifikasi Teknis</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Ukuran / CC</label>
-                                    <input type="text" id="p-ukuran" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="14 Inch / 150cc">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Warna</label>
-                                    <input type="text" id="p-warna" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Hitam, Merah...">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Bahan Baku</label>
-                                    <input type="text" id="p-bahan" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Plastik, Besi, Kayu">
-                                </div>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-amber-300 transition-all duration-300">
+                            <div class="bg-amber-50/80 border-b border-amber-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-amber-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-wrench text-amber-600 text-lg"></i> 2. Spesifikasi Teknis</h3>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Rangka (Kendaraan)</label>
-                                    <input type="text" id="p-norangka" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="MHK...">
+                            <div class="p-5 space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Ukuran / CC</label>
+                                        <input type="text" id="p-ukuran" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="14 Inch / 150cc">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Warna</label>
+                                        <input type="text" id="p-warna" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Hitam, Merah...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Bahan Baku</label>
+                                        <input type="text" id="p-bahan" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Plastik, Besi, Kayu">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Mesin (Kendaraan)</label>
-                                    <input type="text" id="p-nomesin" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="JFD...">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Rangka (Kendaraan)</label>
+                                        <input type="text" id="p-norangka" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="MHK...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">No. Mesin (Kendaraan)</label>
+                                        <input type="text" id="p-nomesin" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="JFD...">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 3. Administrasi -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-amber-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-folder text-amber-500"></i> 3. Administrasi</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembuatan</label>
-                                    <input type="number" id="p-tahunbuat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembelian</label>
-                                    <input type="number" id="p-tahunbeli" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul <span class="text-red-500">*</span></label>
-                                    <input type="text" id="p-asal" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Dana Desa / Hibah">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Harga (Rp) <span class="text-red-500">*</span></label>
-                                    <input type="number" id="p-harga" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-amber-300 transition-all duration-300">
+                            <div class="bg-amber-50/80 border-b border-amber-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-amber-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-folder text-amber-600 text-lg"></i> 3. Administrasi</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembuatan</label>
+                                        <input type="number" id="p-tahunbuat" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Thn Pembelian</label>
+                                        <input type="number" id="p-tahunbeli" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="YYYY">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Asal Usul <span class="text-red-500">*</span></label>
+                                        <input type="text" id="p-asal" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Dana Desa / Hibah">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Harga (Rp) <span class="text-red-500">*</span></label>
+                                        <input type="number" id="p-harga" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="0">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 4. Kondisi & Foto -->
-                        <div class="relative z-10">
-                            <h3 class="text-base font-bold text-gray-800 border-b-2 border-amber-100 pb-2 mb-5 flex items-center gap-2"><i class="fas fa-heartbeat text-amber-500"></i> 4. Kondisi & Media</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="space-y-5">
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Kondisi Barang <span class="text-red-500">*</span></label>
-                                        <select id="p-kondisi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium">
-                                            <option value="Baik (B)">Baik (B)</option>
-                                            <option value="Kurang Baik (KB)">Kurang Baik (KB)</option>
-                                            <option value="Rusak Berat (RB)">Rusak Berat (RB)</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Lokasi / Penanggung Jawab</label>
-                                        <input type="text" id="p-lokasi" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Ruang Kades / Bpk Budi">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Barang (Opsional)</label>
-                                    <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-4 text-center relative hover:bg-gray-100 transition h-full min-h-[120px] flex items-center justify-center group overflow-hidden">
-                                        <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'p-preview', 'p-placeholder', 'p-base64')">
-                                        <div id="p-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
-                                            <i class="fas fa-camera text-3xl mb-2 text-gray-400"></i>
-                                            <span class="text-xs font-bold uppercase tracking-wider">Ambil Foto</span>
+                        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden relative z-10 hover:shadow-md hover:border-amber-300 transition-all duration-300">
+                            <div class="bg-amber-50/80 border-b border-amber-100 px-5 py-3.5">
+                                <h3 class="text-sm md:text-base font-bold text-amber-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-heartbeat text-amber-600 text-lg"></i> 4. Kondisi & Media</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Kondisi Barang <span class="text-red-500">*</span></label>
+                                            <select id="p-kondisi" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium">
+                                                <option value="Baik (B)">Baik (B)</option>
+                                                <option value="Kurang Baik (KB)">Kurang Baik (KB)</option>
+                                                <option value="Rusak Berat (RB)">Rusak Berat (RB)</option>
+                                            </select>
                                         </div>
-                                        <img id="p-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
-                                        <input type="hidden" id="p-base64">
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Lokasi / Penanggung Jawab</label>
+                                            <input type="text" id="p-lokasi" class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all font-medium" placeholder="Ruang Kades / Bpk Budi">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Foto Barang (Opsional)</label>
+                                        <div class="border-2 border-dashed border-gray-300 bg-gray-50 rounded-xl p-4 text-center relative hover:bg-gray-100 transition h-full min-h-[120px] flex items-center justify-center group overflow-hidden">
+                                            <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'p-preview', 'p-placeholder', 'p-base64')">
+                                            <div id="p-placeholder" class="text-gray-400 pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
+                                                <i class="fas fa-camera text-3xl mb-2 text-gray-400"></i>
+                                                <span class="text-xs font-bold uppercase tracking-wider">Ambil Foto</span>
+                                            </div>
+                                            <img id="p-preview" class="hidden h-full w-full object-cover rounded-lg shadow-sm" src="" alt="Preview">
+                                            <input type="hidden" id="p-base64">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3 relative z-10">
-                            <button type="button" onclick="resetForm('peralatan'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition-colors">Batal</button>
+                        <div class="pt-2 flex justify-end gap-3 relative z-10">
+                            <button type="button" onclick="resetForm('peralatan'); switchTab('inventaris-menu')" class="px-6 py-3.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold shadow-sm transition-colors">Batal</button>
                             <button type="submit" id="btn-p-submit" class="w-full md:w-auto px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold shadow-lg shadow-amber-200 flex gap-2 items-center justify-center transition-all active:scale-95">
                                 <i class="fas fa-save"></i> Simpan KIB B
                             </button>
@@ -774,10 +843,17 @@
                             <button onclick="switchTab('laporan-menu')" class="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-50 shadow-sm flex-shrink-0 transition-colors"><i class="fas fa-arrow-left"></i></button>
                             <h2 id="laporan-ui-title" class="text-xl font-bold text-gray-800">Daftar Inventaris</h2>
                         </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button onclick="fetchData()" class="flex-1 md:flex-none text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-4 py-2.5 rounded-xl transition-colors font-bold text-sm flex items-center justify-center gap-2"><i class="fas fa-sync-alt"></i> Segarkan</button>
-                            <button onclick="exportExcel()" class="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm shadow-sm flex items-center justify-center gap-2"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
-                            <button onclick="printLaporan()" class="w-full md:w-auto bg-gray-800 hover:bg-gray-900 text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm shadow-sm flex items-center justify-center gap-2"><i class="fas fa-print"></i> Cetak PDF</button>
+                        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                            <!-- SEARCH BAR TERBARU -->
+                            <div class="relative w-full md:w-64">
+                                <span class="absolute left-3 top-2.5 text-gray-400"><i class="fas fa-search"></i></span>
+                                <input type="text" id="search-input" onkeyup="filterDataToTable()" class="w-full pl-10 p-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-medium" placeholder="Cari aset, kode, kondisi...">
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="fetchData()" class="flex-1 md:flex-none text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-4 py-2.5 rounded-xl transition-colors font-bold text-sm flex items-center justify-center gap-2"><i class="fas fa-sync-alt"></i> Segarkan</button>
+                                <button onclick="exportExcel()" class="flex-1 md:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm shadow-sm flex items-center justify-center gap-2"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
+                                <button onclick="printLaporan()" class="w-full md:w-auto bg-gray-800 hover:bg-gray-900 text-white px-4 py-2.5 rounded-xl transition-colors font-bold text-sm shadow-sm flex items-center justify-center gap-2"><i class="fas fa-print"></i> Cetak PDF</button>
+                            </div>
                         </div>
                     </div>
 
@@ -793,6 +869,18 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- SECTION LAPORAN INDIVIDU (KARTU KIB) TERBARU -->
+                <div id="detail-section" class="section-container hidden animate-fade-in">
+                    <div class="flex justify-between items-center mb-6 no-print">
+                        <button onclick="closeDetail()" class="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 shadow-sm transition-colors flex items-center gap-2"><i class="fas fa-arrow-left"></i> Kembali ke Tabel</button>
+                        <button onclick="window.print()" class="px-6 py-2.5 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-900 shadow-sm transition-colors flex items-center gap-2"><i class="fas fa-print"></i> Cetak Dokumen</button>
+                    </div>
+                    <div id="detail-print-area" class="bg-white p-4 md:p-10 rounded-2xl shadow-sm border border-gray-100 w-full max-w-4xl mx-auto text-gray-800">
+                        <!-- Konten KIB Spesifik Di-inject via JavaScript -->
+                    </div>
+                </div>
+
             </div>
         </main>
         
@@ -816,7 +904,7 @@
 
     <script>
         // GANTI STRING DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbz2QYrVIrXtDp5Q5_QnBPcSuNCaVikUoZESgKrjNtsy_54wv5c5EsxK5R6vVas-kk7g/exec'; 
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwcJoVOgkpiUdl1ZSF3E6gwDpuH6LEnVrCO6YNFzr0Rt1JS92JXzXqWhenJtIFSDurR/exec'; 
         
         let inventoryData = {}; 
         let currentLaporanCategory = 'Semua';
@@ -1203,14 +1291,17 @@
         }
 
         function filterDataToTable() {
-            if (currentLaporanCategory === 'Semua') { renderTable(inventoryData); } 
-            else {
-                const filtered = {};
-                for (const key in inventoryData) {
-                    if (inventoryData[key].kategori === currentLaporanCategory) { filtered[key] = inventoryData[key]; }
-                }
-                renderTable(filtered);
+            const query = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
+            if (currentLaporanCategory === 'Semua' && !query) { renderTable(inventoryData); return; } 
+            
+            const filtered = {};
+            for (const key in inventoryData) {
+                const item = inventoryData[key];
+                if (currentLaporanCategory !== 'Semua' && item.kategori !== currentLaporanCategory) continue;
+                if (query && !JSON.stringify(item).toLowerCase().includes(query)) continue;
+                filtered[key] = item;
             }
+            renderTable(filtered);
         }
 
         function renderTable(data) {
@@ -1289,11 +1380,12 @@
                                <td class="p-3">${item.kondisi || '-'}<br>Lok: ${item.lokasi || '-'}<br>${imgP}</td>`;
                 }
 
-                // Aksi Edit / Hapus
+                // Aksi Edit / Hapus / Detail
                 const editType = item.kategori === 'Lahan' ? 'tanah' : (item.kategori === 'Bangunan' ? 'bangunan' : 'peralatan');
                 const encodedObj = encodeURIComponent(JSON.stringify(item));
                 const actHtml = `<td class="p-3 text-center no-print whitespace-nowrap">
                     <div class="flex items-center justify-center gap-2">
+                        <button onclick="openDetail('${key}')" class="text-emerald-600 hover:text-emerald-800 bg-emerald-50 w-7 h-7 rounded transition-colors" title="Lihat Laporan Individu"><i class="fas fa-file-invoice"></i></button>
                         <button onclick="openForm('${editType}', JSON.parse(decodeURIComponent('${encodedObj}')), '${key}')" class="text-blue-500 hover:text-blue-700 bg-blue-50 w-7 h-7 rounded transition-colors" title="Edit"><i class="fas fa-edit"></i></button>
                         <button onclick="openDeleteModal('${key}')" class="text-red-500 hover:text-red-700 bg-red-50 w-7 h-7 rounded transition-colors" title="Hapus"><i class="fas fa-trash-alt"></i></button>
                     </div>
@@ -1301,6 +1393,169 @@
                 
                 tr.innerHTML = rowHtml + actHtml; tbody.appendChild(tr);
             });
+        }
+
+        // --- STREAMING_CHUNK:Laporan Individu / KIB Card Logic ---
+        function openDetail(key) {
+            const item = inventoryData[key];
+            if(!item) return;
+            
+            document.querySelectorAll('.section-container').forEach(el => el.classList.add('hidden'));
+            document.getElementById('detail-section').classList.remove('hidden');
+            
+            let titleType = item.kategori === 'Lahan' ? 'A (TANAH)' : (item.kategori === 'Bangunan' ? 'C (GEDUNG & BANGUNAN)' : 'B (PERALATAN & MESIN)');
+            
+            let html = `
+            <div class="text-center mb-8 border-b-2 border-gray-800 pb-4">
+                <h2 class="text-2xl font-extrabold uppercase text-gray-900 tracking-wider">KARTU INVENTARIS BARANG</h2>
+                <h3 class="text-xl font-bold uppercase text-gray-800 mb-2">KIB ${titleType}</h3>
+                <p class="text-sm font-medium text-gray-600">Pemerintah Desa Baleadi - Tahun Anggaran Berjalan</p>
+            </div>`;
+            
+            const formatUang = (n) => n ? new Intl.NumberFormat('id-ID').format(n) : '-';
+            
+            // Helper function untuk merender blok tabel
+            const renderBlock = (title, rows) => {
+                let rowsHtml = rows.map(r => `<tr><td class="font-bold w-1/3 bg-gray-50 border border-gray-300 p-2">${r.label}</td><td class="border border-gray-300 p-2 ${r.isBold ? 'font-bold text-gray-900' : ''}">${r.value}</td></tr>`).join('');
+                return `
+                <div class="mb-6 break-inside-avoid">
+                    <h4 class="font-bold text-gray-800 uppercase border-b-2 border-gray-800 pb-1 mb-3">${title}</h4>
+                    <table class="w-full text-left text-sm border-collapse border border-gray-300">
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>`;
+            };
+
+            let sections = '';
+            
+            if(item.kategori === 'Lahan') {
+                sections += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Tanah', value: item.nama || '-' },
+                    { label: 'Jenis Tanah', value: item.jenisTanah || '-' },
+                    { label: 'Alamat / Lokasi', value: item.alamatLokasi || '-' },
+                    { label: 'Nomor Kode Barang', value: item.kodeBarang || '-' },
+                    { label: 'Nomor Register', value: item.register || '-' }
+                ]);
+                sections += renderBlock('2. Spesifikasi Fisik', [
+                    { label: 'Luas Awal / Luas Sekarang', value: `${item.luas || '0'} m² / ${item.luasSekarang || '0'} m²` },
+                    { label: 'Batas Utara', value: item.batasUtara || '-' },
+                    { label: 'Batas Selatan', value: item.batasSelatan || '-' },
+                    { label: 'Batas Timur', value: item.batasTimur || '-' },
+                    { label: 'Batas Barat', value: item.batasBarat || '-' }
+                ]);
+                sections += renderBlock('3. Legalitas / Sertifikat', [
+                    { label: 'Status Hak', value: item.kondisi || '-' },
+                    { label: 'Dokumen Sertifikat', value: `No: ${item.noSertifikat || '-'} / Tgl: ${item.tglSertifikat || '-'}` }
+                ]);
+                sections += renderBlock('4. Administrasi', [
+                    { label: 'Asal Usul', value: item.asalUsul || '-' },
+                    { label: 'Penggunaan', value: item.penggunaan || '-' },
+                    { label: 'Tahun Perolehan', value: item.tahunPerolehan || '-' },
+                    { label: 'Harga Perolehan', value: `Rp ${formatUang(item.harga)}`, isBold: true }
+                ]);
+                sections += renderBlock('5. Titik Lokasi', [
+                    { label: 'Titik Koordinat GPS', value: item.koordinat || '-' }
+                ]);
+            } else if (item.kategori === 'Bangunan') {
+                sections += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Bangunan', value: item.nama || '-' },
+                    { label: 'Nomor Kode Barang', value: item.kodeBarang || '-' },
+                    { label: 'Nomor Register', value: item.register || '-' }
+                ]);
+                sections += renderBlock('2. Spesifikasi Fisik & Teknis', [
+                    { label: 'Luas Lantai / Jumlah Lantai', value: `${item.luas || '0'} m² / ${item.lantai || '0'} Lantai` },
+                    { label: 'Kondisi Bangunan', value: item.kondisi || '-' },
+                    { label: 'Jenis Konstruksi', value: item.konstruksi || '-' },
+                    { label: 'Letak / Alamat', value: item.alamat || '-' }
+                ]);
+                sections += renderBlock('3. Legalitas & Administrasi', [
+                    { label: 'Dokumen IMB', value: `No: ${item.noImb || '-'} / Tgl: ${item.tglImb || '-'}` },
+                    { label: 'Asal Usul', value: item.asalUsul || '-' },
+                    { label: 'Tahun Pembuatan', value: item.tahunBuat || '-' },
+                    { label: 'Tahun Perolehan', value: item.tahunBeli || '-' },
+                    { label: 'Nilai Aset', value: `Rp ${formatUang(item.nilai)}`, isBold: true }
+                ]);
+                sections += renderBlock('4. Lokasi & Visual', [
+                    { label: 'Titik Koordinat GPS', value: item.koordinat || '-' }
+                ]);
+            } else if (item.kategori === 'Peralatan') {
+                sections += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Barang', value: item.nama || '-' },
+                    { label: 'Merk / Tipe', value: item.merk || '-' },
+                    { label: 'Nomor Kode Barang', value: item.kodeBarang || '-' },
+                    { label: 'Nomor Register', value: item.register || '-' }
+                ]);
+                sections += renderBlock('2. Spesifikasi Teknis', [
+                    { label: 'Ukuran / Bahan / Warna', value: `${item.ukuran || '-'} / ${item.bahan || '-'} / ${item.warna || '-'}` },
+                    { label: 'No. Rangka', value: item.noRangka || '-' },
+                    { label: 'No. Mesin', value: item.noMesin || '-' }
+                ]);
+                sections += renderBlock('3. Administrasi', [
+                    { label: 'Asal Usul', value: item.asalUsul || '-' },
+                    { label: 'Tahun Pembuatan', value: item.tahunBuat || '-' },
+                    { label: 'Tahun Pembelian', value: item.tahunBeli || '-' },
+                    { label: 'Harga Pembelian', value: `Rp ${formatUang(item.harga)}`, isBold: true }
+                ]);
+                sections += renderBlock('4. Kondisi & Lokasi', [
+                    { label: 'Kondisi Barang', value: item.kondisi || '-' },
+                    { label: 'Lokasi / Penanggung Jawab', value: item.lokasi || '-' }
+                ]);
+            }
+            
+            html += sections;
+            
+            // Lampiran Media (Diperbarui dengan urutan 2 foto berdampingan dan dokumen pendukung)
+            let imgGroup = '';
+            const renderImg = (label, src) => src ? `<div class="break-inside-avoid mb-4"><p class="font-bold text-xs bg-gray-100 p-2 border border-gray-300 border-b-0 uppercase tracking-wider text-center">${label}</p><img src="${src}" class="w-full h-48 object-cover border border-gray-300 rounded-b-lg"></div>` : '';
+            
+            if(item.kategori === 'Lahan') {
+                // Baris 1: Foto Lahan 1 & Foto Lahan 2 Berdampingan (Kiri & Kanan)
+                if (item.foto || item.foto2) {
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += item.foto ? renderImg('Foto Lahan 1 (Utama)', item.foto) : '<div></div>';
+                    imgGroup += item.foto2 ? renderImg('Foto Lahan 2 (Tambahan)', item.foto2) : '<div></div>';
+                    imgGroup += `</div>`;
+                }
+                // Baris 2: SPPT & Hasil Ukur
+                if (item.buktiSppt || item.buktiUkur) {
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += item.buktiSppt ? renderImg('Bukti SPPT Pajak', item.buktiSppt) : '<div></div>';
+                    imgGroup += item.buktiUkur ? renderImg('Hasil Pengukuran', item.buktiUkur) : '<div></div>';
+                    imgGroup += `</div>`;
+                }
+                // Baris 3: Batas Lokasi & Sertifikat
+                if (item.buktiBatas || item.buktiSertifikat) {
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += item.buktiBatas ? renderImg('Batas Lokasi', item.buktiBatas) : '<div></div>';
+                    imgGroup += item.buktiSertifikat ? renderImg('Sertifikat / Letter C', item.buktiSertifikat) : '<div></div>';
+                    imgGroup += `</div>`;
+                }
+            } else if (item.kategori === 'Bangunan') { 
+                imgGroup += renderImg('Foto Bangunan', item.foto); 
+            } else if (item.kategori === 'Peralatan') { 
+                imgGroup += renderImg('Foto Barang/Kendaraan', item.foto); 
+            }
+
+            if(imgGroup !== '') { 
+                html += `<div class="mt-8 break-inside-avoid"><h4 class="font-bold text-lg mb-4 border-b-2 border-gray-800 pb-2 uppercase">Lampiran Visual & Dokumen</h4>${imgGroup}</div>`; 
+            }
+            
+            // Kolom Tanda Tangan Khusus Cetak
+            html += `
+            <div class="mt-16 flex justify-end text-center print:flex no-print hidden" style="page-break-inside: avoid;">
+                <div class="w-64">
+                    <p class="mb-24 text-sm font-medium">Baleadi, ................................ 20...<br>Kepala Desa Baleadi</p>
+                    <p class="font-bold underline uppercase">.........................................</p>
+                    <p class="text-xs mt-1">NIP. ....................................</p>
+                </div>
+            </div>`;
+            
+            document.getElementById('detail-print-area').innerHTML = html;
+        }
+
+        function closeDetail() {
+            document.getElementById('detail-section').classList.add('hidden');
+            document.getElementById('data-section').classList.remove('hidden');
         }
 
         // --- STREAMING_CHUNK:Delete Modal & Ekspor ---

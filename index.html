@@ -912,7 +912,7 @@
         
         // --- AUTHENTICATION ---
         function checkLogin() {
-            if (document.getElementById('pin-input').value === 'hasyimoto') {
+            if (document.getElementById('pin-input').value === '789') {
                 sessionStorage.setItem('isLoggedIn', 'true');
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
@@ -990,6 +990,7 @@
                     };
                     
                     resetPhoto('t-preview', 't-placeholder', 't-base64', editData.foto);
+                    resetPhoto('t-preview2', 't-placeholder2', 't-base64-2', editData.foto2);
                     resetPhoto('t-sppt-preview', 't-sppt-placeholder', 't-sppt-base64', editData.buktiSppt);
                     resetPhoto('t-ukur-preview', 't-ukur-placeholder', 't-ukur-base64', editData.buktiUkur);
                     resetPhoto('t-batas-preview', 't-batas-placeholder', 't-batas-base64', editData.buktiBatas);
@@ -1060,6 +1061,7 @@
                     document.getElementById(base64Id).value = '';
                 };
                 resetPhotoUI('t-preview', 't-placeholder', 't-base64');
+                resetPhotoUI('t-preview2', 't-placeholder2', 't-base64-2');
                 resetPhotoUI('t-sppt-preview', 't-sppt-placeholder', 't-sppt-base64');
                 resetPhotoUI('t-ukur-preview', 't-ukur-placeholder', 't-ukur-base64');
                 resetPhotoUI('t-batas-preview', 't-batas-placeholder', 't-batas-base64');
@@ -1217,6 +1219,7 @@
                 payloadData.penggunaan = document.getElementById('t-penggunaan').value;
                 payloadData.koordinat = document.getElementById('t-koordinat').value;
                 payloadData.foto = document.getElementById('t-base64').value;
+                payloadData.foto2 = document.getElementById('t-base64-2').value;
                 payloadData.buktiSppt = document.getElementById('t-sppt-base64').value;
                 payloadData.buktiUkur = document.getElementById('t-ukur-base64').value;
                 payloadData.buktiBatas = document.getElementById('t-batas-base64').value;
@@ -1342,6 +1345,7 @@
                     const gps = item.koordinat ? `<br><a href="https://maps.google.com/?q=${item.koordinat}" target="_blank" class="text-blue-500 text-[10px] hover:underline no-print font-bold"><i class="fas fa-map-marker-alt"></i> Buka Peta</a>` : '';
                     let meds = '';
                     if(item.foto) meds += `<button onclick="viewPhoto('${item.foto}')" class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded mr-1 mb-1 no-print"><i class="fas fa-image"></i> Utama</button>`;
+                    if(item.foto2) meds += `<button onclick="viewPhoto('${item.foto2}')" class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded mr-1 mb-1 no-print"><i class="fas fa-images"></i> Tambahan</button>`;
                     if(item.buktiSppt) meds += `<button onclick="viewPhoto('${item.buktiSppt}')" class="text-[10px] bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded mr-1 mb-1 no-print">SPPT</button>`;
                     if(item.buktiUkur) meds += `<button onclick="viewPhoto('${item.buktiUkur}')" class="text-[10px] bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded mr-1 mb-1 no-print">Ukur</button>`;
                     if(item.buktiBatas) meds += `<button onclick="viewPhoto('${item.buktiBatas}')" class="text-[10px] bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded mr-1 mb-1 no-print">Batas</button>`;

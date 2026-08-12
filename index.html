@@ -29,7 +29,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         @media print {
-            @page { size: landscape; margin: 1cm; }
+            @page { margin: 1cm; } /* Dihapus 'size: landscape' agar pengguna bebas memilih orientasi kertas (Portrait lebih bagus untuk KIB Individu) */
             body { background-color: white !important; font-size: 10px !important; }
             .no-print, #bottom-nav, aside, header { display: none !important; }
             .section-container { display: none !important; }
@@ -39,9 +39,13 @@
             tr { page-break-inside: avoid; page-break-after: auto; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
             th, td { border: 1px solid #000; padding: 6px; font-size: 10px; text-align: left; vertical-align: top; }
+            
+            /* Optimasi area cetak KIB individu agar full page */
+            #detail-print-area { max-width: 100% !important; width: 100% !important; padding: 0 !important; border: none !important; margin: 0 !important; }
             #detail-print-area td { font-size: 12px; padding: 8px; }
+            
             .print-image { max-width: 50px; max-height: 50px; display: block; margin-top: 4px; }
-            #app-container, main { height: auto !important; overflow: visible !important; }
+            #app-container, main { height: auto !important; overflow: visible !important; display: block !important; }
         }
         .print-header { display: none; }
         
@@ -1418,13 +1422,13 @@
             
             const formatUang = (n) => n ? new Intl.NumberFormat('id-ID').format(n) : '-';
             
-            // Helper function untuk merender blok tabel
+            // Helper function untuk merender blok tabel (DIHAPUS class break-inside-avoid agar mengalir mulus)
             const renderBlock = (title, rows) => {
                 let rowsHtml = rows.map(r => `<tr><td class="font-bold w-1/3 bg-gray-50 border border-gray-300 p-2">${r.label}</td><td class="border border-gray-300 p-2 ${r.isBold ? 'font-bold text-gray-900' : ''}">${r.value}</td></tr>`).join('');
                 return `
-                <div class="mb-6 break-inside-avoid">
+                <div class="mb-6">
                     <h4 class="font-bold text-gray-800 uppercase border-b-2 border-gray-800 pb-1 mb-3">${title}</h4>
-                    <table class="w-full text-left text-sm border-collapse border border-gray-300">
+                    <table class="w-full text-left text-sm border-collapse border border-gray-300" style="page-break-inside: auto;">
                         <tbody>${rowsHtml}</tbody>
                     </table>
                 </div>`;
@@ -1508,48 +1512,47 @@
             
             html += sections;
             
-            // Lampiran Media (Diperbarui dengan urutan 2 foto berdampingan dan dokumen pendukung)
+            // Lampiran Media 
             let imgGroup = '';
-            const renderImg = (label, src) => src ? `<div class="break-inside-avoid mb-4"><p class="font-bold text-xs bg-gray-100 p-2 border border-gray-300 border-b-0 uppercase tracking-wider text-center">${label}</p><img src="${src}" class="w-full h-48 object-cover border border-gray-300 rounded-b-lg"></div>` : '';
+            // Pertahankan pencegah potong (break-inside-avoid) HANYA untuk masing-masing foto individual, bukan seluruh baris.
+            const renderImg = (label, src) => src ? `<div class="break-inside-avoid mb-4"><p class="font-bold text-xs bg-gray-100 p-2 border border-gray-300 border-b-0 uppercase tracking-wider text-center">${label}</p><img src="${src}" class="w-full aspect-[4/3] object-cover border border-gray-300 rounded-b-lg"></div>` : '';
             
             if(item.kategori === 'Lahan') {
-                // Baris 1: Foto Lahan 1 & Foto Lahan 2 Berdampingan (Kiri & Kanan)
+                // DIHAPUS class break-inside-avoid dari setiap grid pembungkus
                 if (item.foto || item.foto2) {
-                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">`;
                     imgGroup += item.foto ? renderImg('Foto Lahan 1 (Utama)', item.foto) : '<div></div>';
                     imgGroup += item.foto2 ? renderImg('Foto Lahan 2 (Tambahan)', item.foto2) : '<div></div>';
                     imgGroup += `</div>`;
                 }
-                // Baris 2: SPPT & Hasil Ukur
                 if (item.buktiSppt || item.buktiUkur) {
-                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">`;
                     imgGroup += item.buktiSppt ? renderImg('Bukti SPPT Pajak', item.buktiSppt) : '<div></div>';
                     imgGroup += item.buktiUkur ? renderImg('Hasil Pengukuran', item.buktiUkur) : '<div></div>';
                     imgGroup += `</div>`;
                 }
-                // Baris 3: Batas Lokasi & Sertifikat
                 if (item.buktiBatas || item.buktiSertifikat) {
-                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 break-inside-avoid mb-4">`;
+                    imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">`;
                     imgGroup += item.buktiBatas ? renderImg('Batas Lokasi', item.buktiBatas) : '<div></div>';
                     imgGroup += item.buktiSertifikat ? renderImg('Sertifikat / Letter C', item.buktiSertifikat) : '<div></div>';
                     imgGroup += `</div>`;
                 }
             } else if (item.kategori === 'Bangunan') { 
-                imgGroup += renderImg('Foto Bangunan', item.foto); 
+                imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">${renderImg('Foto Bangunan', item.foto)}</div>`; 
             } else if (item.kategori === 'Peralatan') { 
-                imgGroup += renderImg('Foto Barang/Kendaraan', item.foto); 
+                imgGroup += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">${renderImg('Foto Barang/Kendaraan', item.foto)}</div>`; 
             }
 
             if(imgGroup !== '') { 
-                html += `<div class="mt-8 break-inside-avoid"><h4 class="font-bold text-lg mb-4 border-b-2 border-gray-800 pb-2 uppercase">Lampiran Visual & Dokumen</h4>${imgGroup}</div>`; 
+                html += `<div class="mt-8"><h4 class="font-bold text-lg mb-4 border-b-2 border-gray-800 pb-2 uppercase">Lampiran Visual & Dokumen</h4>${imgGroup}</div>`; 
             }
             
-            // Kolom Tanda Tangan Khusus Cetak
+            // Tanda Tangan
             html += `
-            <div class="mt-16 flex justify-end text-center print:flex no-print hidden" style="page-break-inside: avoid;">
-                <div class="w-64">
-                    <p class="mb-24 text-sm font-medium">Baleadi, ................................ 20...<br>Kepala Desa Baleadi</p>
-                    <p class="font-bold underline uppercase">.........................................</p>
+            <div class="mt-12 flex justify-end break-inside-avoid text-sm">
+                <div class="text-center w-64">
+                    <p class="mb-16">Baleadi, ....................................</p>
+                    <p class="font-bold uppercase underline">Kepala Desa Baleadi</p>
                     <p class="text-xs mt-1">NIP. ....................................</p>
                 </div>
             </div>`;

@@ -70,39 +70,39 @@
             th, td { border: 1px solid #000; padding: 4px 6px; font-size: 9.5px; text-align: left; vertical-align: top; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
             
-            /* STRUKTUR CETAK 2 HALAMAN (HALAMAN 1 = DATA + TTD) */
+            /* STRUKTUR CETAK 2 HALAMAN (HALAMAN 1 = DATA) */
             .print-first-page { 
-                height: 26.5cm !important; /* Memaksa elemen membentang setinggi 1 halaman A4 */
-                display: flex !important; 
-                flex-direction: column !important; 
-                justify-content: space-between !important; /* Konten di atas, TTD didorong ke bawah */
+                display: block !important; /* Kembali ke alur normal (rata atas) */
             }
             
-            /* TANDA TANGAN (Didorong ke bawah) */
+            /* TANDA TANGAN (Halaman 2) */
             .signature-container {
-                margin-top: auto !important; 
                 display: flex !important;
                 justify-content: flex-end !important;
                 width: 100% !important;
-                padding-top: 15px;
+                padding-top: 40px !important;
+                page-break-inside: avoid;
             }
-            .signature-block { width: 220px; text-align: center; page-break-inside: avoid; }
+            .signature-block { width: 220px; text-align: center; }
             
             /* DESAIN BARIS DETAIL AGAR RAPI & LEBAR */
-            .detail-card { break-inside: avoid; margin-bottom: 12px; border: 1px solid #000 !important; }
-            .detail-header { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; border-bottom: 1px solid #000 !important; padding: 6px 10px !important; font-size: 12px !important; }
+            .detail-card { break-inside: avoid; margin-bottom: 24px; border: 1px solid #000 !important; }
+            .detail-header { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; border-bottom: 1px solid #000 !important; padding: 10px 14px !important; font-size: 14px !important; }
             .detail-row { break-inside: avoid; border-bottom: 1px solid #000 !important; }
             .detail-row:last-child { border-bottom: none !important; }
-            .detail-label { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; font-weight: bold; width: 35%; padding: 6px 10px !important; border-right: 1px solid #000 !important; text-align: left !important; font-size: 11px !important; }
-            .detail-value { width: 65%; padding: 6px 10px !important; text-align: left !important; font-size: 11px !important; }
+            
+            /* PADDING DIPERBESAR AGAR ROW TERLIHAT LEBAR DAN PENUH */
+            .detail-label { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; font-weight: bold; width: 35%; padding: 12px 14px !important; border-right: 1px solid #000 !important; text-align: left !important; font-size: 13px !important; }
+            .detail-value { width: 65%; padding: 12px 14px !important; text-align: left !important; font-size: 13px !important; }
 
-            /* HALAMAN 2 (FOTO) */
+            /* HALAMAN 2 (FOTO & TANDA TANGAN) */
             #detail-content-page2 { 
                 page-break-before: always !important; 
                 break-before: page !important; 
+                display: block !important;
             }
-            #detail-content-page2 .detail-card { border: none !important; }
-            #detail-content-page2 img { max-height: 40vh !important; object-fit: contain; }
+            #lampiran-container .detail-card { border: none !important; margin-bottom: 15px !important; }
+            #lampiran-container img { max-height: 40vh !important; object-fit: contain; }
         }
         .print-header { display: none; }
         
@@ -980,31 +980,32 @@
 
                     <!-- Area Print Resmi (Format 2 Halaman) -->
                     <div id="print-area-detail" class="text-gray-900 bg-white">
-                        <!-- HALAMAN 1 (DATA + TTD) -->
+                        <!-- HALAMAN 1 (DATA) -->
                         <div class="print-first-page">
-                            <div>
-                                <div class="text-center mb-5 border-b-2 border-gray-800 pb-3">
-                                    <h2 class="text-lg font-bold uppercase tracking-widest">Pemerintah Desa Baleadi</h2>
-                                    <h1 id="det-title" class="text-xl font-black uppercase mt-1">Kartu Inventaris Barang (KIB)</h1>
-                                    <p class="text-sm font-medium mt-1">Tahun Anggaran Berjalan</p>
-                                </div>
-                                
-                                <div id="detail-content" class="space-y-3">
-                                    <!-- Konten detail Halaman 1 digenerate via JS -->
-                                </div>
+                            <div class="text-center mb-6 border-b-2 border-gray-800 pb-4">
+                                <h2 class="text-lg font-bold uppercase tracking-widest">Pemerintah Desa Baleadi</h2>
+                                <h1 id="det-title" class="text-xl font-black uppercase mt-1">Kartu Inventaris Barang (KIB)</h1>
+                                <p class="text-sm font-medium mt-1">Tahun Anggaran Berjalan</p>
                             </div>
-
-                            <div class="signature-container">
-                                <div class="signature-block">
-                                    <p class="mb-20 text-sm">Kepala Desa Baleadi,</p>
-                                    <p class="font-bold border-b-2 border-gray-800 inline-block px-4 text-sm w-full">......................................</p>
-                                </div>
+                            
+                            <div id="detail-content" class="space-y-4">
+                                <!-- Konten detail Halaman 1 digenerate via JS -->
                             </div>
                         </div>
 
-                        <!-- HALAMAN 2 (FOTO KHUSUS) -->
-                        <div id="detail-content-page2" style="display: none;">
-                            <!-- Lampiran digenerate via JS -->
+                        <!-- HALAMAN 2 (FOTO DAN TANDA TANGAN KADES) -->
+                        <div id="detail-content-page2" class="mt-10 pt-4">
+                            <div id="lampiran-container">
+                                <!-- Lampiran foto visual digenerate via JS dimasukkan ke sini -->
+                            </div>
+                            
+                            <!-- TANDA TANGAN -->
+                            <div class="signature-container mt-12 flex justify-end w-full">
+                                <div class="signature-block w-56 text-center">
+                                    <p class="mb-24 text-sm">Kepala Desa Baleadi,</p>
+                                    <p class="font-bold border-b-2 border-gray-800 inline-block px-4 text-sm w-full">......................................</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1618,7 +1619,7 @@
             
             if(item.kategori === 'Lahan') {
                 sections += renderBlock('1. Identitas Aset', [
-                    { label: 'Nama Hak Pengguna', value: item.hakPengguna },
+                    { label: 'Nama Hak Pengguna', value: `<span class="font-black text-base md:text-lg print:text-[16px] uppercase text-emerald-800 print:text-black">${escapeHTML(item.hakPengguna)}</span>`, isHtml: true },
                     { label: 'Nama Tanah', value: item.nama },
                     { label: 'Jenis Tanah', value: item.jenisTanah },
                     { label: 'Alamat / Lokasi', value: item.alamatLokasi },
@@ -1715,14 +1716,11 @@
             }
             content.innerHTML = sections;
             
-            // Logika untuk menampilkan/menyembunyikan Halaman 2 (Foto)
-            if (imageSections !== '') {
-                contentPage2.innerHTML = imageSections;
-                contentPage2.style.display = 'block';
-            } else {
-                contentPage2.innerHTML = '';
-                contentPage2.style.display = 'none';
-            }
+            // Logika untuk menampilkan Lampiran & Tanda Tangan khusus di Halaman 2
+            const lampiranContainer = document.getElementById('lampiran-container');
+            
+            lampiranContainer.innerHTML = imageSections;
+            contentPage2.style.display = 'block'; 
         }
 
         function openDeleteModal(id) {

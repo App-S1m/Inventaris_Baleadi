@@ -32,15 +32,43 @@
 
         /* Styling Cetak PDF Laporan Tabel & KIB Individu (Rapat & Hemat Kertas) */
         @media print {
-            @page { margin: 0.8cm; }
-            body { background-color: white !important; font-size: 9.5px !important; color: black !important; }
+            @page { margin: 1cm; size: auto; }
+            
+            /* Mematikan sifat Flexbox/Screen Layout pada Body agar mulai dari paling atas kertas */
+            html, body { 
+                height: auto !important; 
+                display: block !important; 
+                position: static !important; 
+                overflow: visible !important; 
+                background-color: white !important; 
+                font-size: 9.5px !important; 
+                color: black !important; 
+            }
             .no-print, #bottom-nav, aside, header { display: none !important; }
-            #data-section, #detail-section { display: block !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
+            
+            /* Mematikan Flexbox pada Container */
+            #app-container, main { 
+                display: block !important; 
+                height: auto !important; 
+                position: static !important; 
+                overflow: visible !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+            }
+            
+            #data-section, #detail-section { 
+                display: block !important; 
+                box-shadow: none !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                width: 100% !important; 
+                max-width: 100% !important;
+            }
+            
             .print-header { display: block !important; text-align: center; margin-bottom: 10px; }
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #000; padding: 4px 6px; font-size: 9.5px; text-align: left; vertical-align: top; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
-            #app-container, main { height: auto !important; overflow: visible !important; padding-bottom: 0 !important;}
             
             /* Kerapian Cetak Individu (Rapat & Mengalir) */
             .detail-card { break-inside: avoid; margin-bottom: 8px; border: 1px solid #000 !important; }
@@ -1513,7 +1541,6 @@
             const content = document.getElementById('detail-content');
             let sections = '';
             
-            // Ditambahkan flag 'isHtml' agar sistem bisa merender tombol Link Google Map
             const renderBlock = (title, dataArray) => {
                 let html = `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2">
                             <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-xs px-3 py-1.5 bg-gray-100 border-b border-gray-300">${title}</div>
@@ -1533,18 +1560,18 @@
                 if(!src) return '';
                 if(src.startsWith('data:application/pdf')) {
                     return `<div class="text-center p-1.5 border border-gray-300 rounded bg-gray-50 break-inside-avoid">
-                                <i class="fas fa-file-pdf text-2xl text-red-500 mb-1 mt-1"></i>
+                                <i class="fas fa-file-pdf text-2xl text-red-500 mb-1 mt-1 cursor-pointer hover:opacity-80" onclick="viewPhoto('${src}')" title="Pratinjau PDF"></i>
                                 <p class="text-[10px] font-bold text-gray-600 border-t border-gray-200 mt-1 pt-1">${label}</p>
                                 <a href="${src}" download="${label}.pdf" class="text-[9px] text-blue-500 hover:underline no-print">Download PDF</a>
                             </div>`;
                 }
                 return `<div class="text-center p-1.5 border border-gray-300 rounded bg-gray-50 break-inside-avoid">
-                            <img src="${src}" class="w-full aspect-[4/3] object-cover rounded border border-gray-200" alt="${label}">
+                            <img src="${src}" onclick="viewPhoto('${src}')" class="w-full aspect-[4/3] object-cover rounded border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity no-print" alt="${label}" title="Klik untuk memperbesar">
+                            <img src="${src}" class="hidden print:block w-full aspect-[4/3] object-cover rounded border border-gray-200" alt="${label}">
                             <p class="text-[10px] font-bold text-gray-700 border-t border-gray-200 mt-1 pt-1 uppercase tracking-wider">${label}</p>
                         </div>`;
             };
             
-            // Format HTML khusus untuk Link Peta
             const buatLinkPeta = (koordinat) => {
                 if (!koordinat || koordinat.trim() === '') return '-';
                 return `${escapeHTML(koordinat)} <a href="https://maps.google.com/?q=${escapeHTML(koordinat)}" target="_blank" class="text-blue-600 hover:underline font-bold ml-2 no-print bg-blue-50 px-2 py-0.5 rounded border border-blue-200 transition-colors hover:bg-blue-100 inline-block mt-1 sm:mt-0"><i class="fas fa-map-marked-alt"></i> Buka Google Maps</a>`;

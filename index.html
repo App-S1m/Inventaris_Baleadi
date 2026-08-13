@@ -70,12 +70,25 @@
             th, td { border: 1px solid #000; padding: 4px 6px; font-size: 9.5px; text-align: left; vertical-align: top; }
             th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
             
-            /* Kerapian Cetak Individu (Rapat & Mengalir) */
-            .detail-card { break-inside: avoid; margin-bottom: 8px; border: 1px solid #000 !important; }
-            .detail-header { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; border-bottom: 1px solid #000 !important; padding: 5px 8px !important; font-size: 10px !important; }
-            .detail-row { break-inside: avoid; border-bottom: 1px solid #e5e7eb !important; }
-            .detail-label { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; font-weight: bold; width: 35%; padding: 4px 6px !important; border-right: 1px solid #e5e7eb !important; text-align: left !important; }
-            .detail-value { width: 65%; padding: 4px 6px !important; text-align: left !important; }
+            /* Kerapian Cetak Individu & Lembar Terpisah */
+            .print-first-page { 
+                min-height: 95vh; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                justify-content: space-between !important; 
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+            .print-page-break { 
+                page-break-before: always !important; 
+                break-before: page !important; 
+            }
+            .detail-card { break-inside: avoid; margin-bottom: 12px; border: 1px solid #000 !important; }
+            .detail-header { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; border-bottom: 1px solid #000 !important; padding: 8px 10px !important; font-size: 12px !important; }
+            .detail-row { break-inside: avoid; border-bottom: 1px solid #000 !important; }
+            .detail-label { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; font-weight: bold; width: 35%; padding: 8px 10px !important; border-right: 1px solid #000 !important; text-align: left !important; font-size: 11px !important; }
+            .detail-value { width: 65%; padding: 8px 10px !important; text-align: left !important; font-size: 11px !important; }
+            #detail-content-page2 img { max-height: 45vh; }
         }
         .print-header { display: none; }
         
@@ -951,23 +964,33 @@
                         </button>
                     </div>
 
-                    <!-- Area Print Resmi (Rapat & Rata Kiri) -->
-                    <div id="print-area-detail" class="text-gray-900 bg-white space-y-3">
-                        <div class="text-center mb-4 border-b-2 border-gray-800 pb-3">
-                            <h2 class="text-lg font-bold uppercase tracking-widest">Pemerintah Desa Baleadi</h2>
-                            <h1 id="det-title" class="text-xl font-black uppercase mt-0.5">Kartu Inventaris Barang (KIB)</h1>
-                            <p class="text-xs font-medium mt-0.5">Tahun Anggaran Berjalan</p>
-                        </div>
-                        
-                        <div id="detail-content" class="space-y-3">
-                            <!-- Konten detail digenerate via JS -->
+                    <!-- Area Print Resmi (Format 2 Halaman) -->
+                    <div id="print-area-detail" class="text-gray-900 bg-white">
+                        <!-- HALAMAN 1 -->
+                        <div class="print-first-page">
+                            <div>
+                                <div class="text-center mb-6 border-b-2 border-gray-800 pb-4">
+                                    <h2 class="text-lg font-bold uppercase tracking-widest">Pemerintah Desa Baleadi</h2>
+                                    <h1 id="det-title" class="text-xl font-black uppercase mt-1">Kartu Inventaris Barang (KIB)</h1>
+                                    <p class="text-sm font-medium mt-1">Tahun Anggaran Berjalan</p>
+                                </div>
+                                
+                                <div id="detail-content" class="space-y-4">
+                                    <!-- Konten detail Halaman 1 digenerate via JS -->
+                                </div>
+                            </div>
+
+                            <div class="mt-10 flex justify-end text-center print-break-inside-avoid pt-6 pb-2">
+                                <div class="w-56">
+                                    <p class="mb-20 text-sm">Kepala Desa Baleadi,</p>
+                                    <p class="font-bold border-b-2 border-gray-800 inline-block px-6 text-sm">......................................</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mt-10 flex justify-end text-center print-break-before-avoid pt-4">
-                            <div class="w-48">
-                                <p class="mb-12 text-xs">Kepala Desa Baleadi,</p>
-                                <p class="font-bold border-b border-gray-800 inline-block px-4 text-xs">......................................</p>
-                            </div>
+                        <!-- HALAMAN 2 (FOTO) -->
+                        <div id="detail-content-page2">
+                            <!-- Lampiran digenerate via JS -->
                         </div>
                     </div>
                 </div>
@@ -995,6 +1018,7 @@
     </div>
 
     <script>
+        // Gunakan URL Apps Script sesuai yang Anda berikan
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRwyIar1NrWUD4FXyGSB3sbwdkrcZxJ2-MST_KgfHuxsVxFxKxAp4IpyUe57JWl1lc/exec'; 
         
         let inventoryData = {}; 
@@ -1050,7 +1074,6 @@
             document.querySelectorAll('.section-container').forEach(el => el.classList.add('hidden'));
             document.getElementById('form-' + type + '-section').classList.remove('hidden');
 
-            // Ambil data langsung dari global memory jika tidak di-pass dari parameter
             if (!editData && editId && inventoryData[editId]) {
                 editData = inventoryData[editId];
             }
@@ -1539,7 +1562,9 @@
             document.getElementById('det-title').innerText = `Kartu Inventaris Barang (KIB ${item.kategori === 'Lahan' ? 'A - Tanah' : (item.kategori === 'Bangunan' ? 'C - Gedung & Bangunan' : 'B - Peralatan & Mesin')})`;
             
             const content = document.getElementById('detail-content');
+            const contentPage2 = document.getElementById('detail-content-page2');
             let sections = '';
+            let imageSections = '';
             
             const renderBlock = (title, dataArray) => {
                 let html = `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2">
@@ -1628,9 +1653,9 @@
                 }
 
                 if(imgGroup) {
-                    sections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-xs px-3 py-1.5 bg-gray-100 border-b border-gray-300">6. Lampiran & Dokumentasi Visual</div>
-                                    <div class="p-3">${imgGroup}</div>
+                    imageSections += `<div class="print-page-break detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mt-4">
+                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border-b border-gray-300">6. Lampiran & Dokumentasi Visual</div>
+                                    <div class="p-5">${imgGroup}</div>
                                  </div>`;
                 }
 
@@ -1653,9 +1678,9 @@
                     { label: 'Titik Koordinat', value: buatLinkPeta(item.koordinat), isHtml: true }
                 ]);
                 if(item.foto) {
-                    sections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2 break-inside-avoid">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-xs px-3 py-1.5 bg-gray-100 border-b border-gray-300">6. Dokumentasi Visual</div>
-                                    <div class="p-3 grid grid-cols-2 gap-2">${renderImg(item.foto, 'Foto Bangunan / Gedung')}</div>
+                    imageSections += `<div class="print-page-break detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mt-4 break-inside-avoid">
+                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border-b border-gray-300">6. Dokumentasi Visual</div>
+                                    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Bangunan / Gedung')}</div>
                                  </div>`;
                 }
             } else if (item.kategori === 'Peralatan') {
@@ -1674,13 +1699,14 @@
                     { label: 'Kondisi Barang', value: item.kondisi }, { label: 'Lokasi / Penanggung Jawab', value: item.lokasi }
                 ]);
                 if(item.foto) {
-                    sections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2 break-inside-avoid">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-xs px-3 py-1.5 bg-gray-100 border-b border-gray-300">5. Dokumentasi Visual</div>
-                                    <div class="p-3 grid grid-cols-2 gap-2">${renderImg(item.foto, 'Foto Peralatan & Mesin')}</div>
+                    imageSections += `<div class="print-page-break detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mt-4 break-inside-avoid">
+                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border-b border-gray-300">5. Dokumentasi Visual</div>
+                                    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Peralatan & Mesin')}</div>
                                  </div>`;
                 }
             }
             content.innerHTML = sections;
+            contentPage2.innerHTML = imageSections;
         }
 
         function openDeleteModal(id) {

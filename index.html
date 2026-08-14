@@ -837,6 +837,10 @@
                 document.getElementById('app-container').classList.remove('hidden');
                 showToast('Otentikasi Admin Berhasil', 'success');
                 switchTab('dashboard');
+                
+                // Tambahan: Pastikan statistik dan tabel langsung di-render saat login
+                updateStats();
+                filterDataToTable();
             } else {
                 showToast('Sandi Administrator Salah!', 'error');
                 document.getElementById('pin-input').value = '';
@@ -859,8 +863,11 @@
                 const result = await res.json();
                 if(result.status === 'success') {
                     inventoryData = result.data || {};
+                    
+                    updateStats(); // Tambahan: Selalu perbarui angka dashboard di latar belakang
+                    
                     if(document.getElementById('app-container').classList.contains('hidden') === false){
-                        filterDataToTable(); updateStats();
+                        filterDataToTable(); 
                     } else {
                         searchPublic(); // Update public view if active
                     }

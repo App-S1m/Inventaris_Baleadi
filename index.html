@@ -25,62 +25,71 @@
         }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .custom-scrollbar::-webkit-scrollbar, ::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track, ::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Styling Cetak PDF Laporan Tabel & KIB Individu (Ketat 2 Lembar A4) */
+        /* Styling Cetak PDF Laporan Tabel & KIB Individu (Presisi 2 Lembar) */
         @media print {
             @page { margin: 1cm; size: A4 portrait; }
             
             html, body { 
-                height: auto !important; display: block !important; position: static !important; overflow: visible !important; 
-                background-color: white !important; color: black !important; -webkit-print-color-adjust: exact;
-            }
-            .no-print, #bottom-nav, aside, header { display: none !important; }
-            
-            #app-container, main, #detail-section, #print-area-detail { 
-                display: block !important; padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; border: none !important; box-shadow: none !important;
-            }
-
-            /* --- HALAMAN 1 (KHUSUS DATA 1-5, RATA ATAS) --- */
-            .print-first-page {
+                background-color: white !important; 
+                font-size: 11px !important; 
+                color: black !important; 
+                height: auto !important;
                 display: block !important;
-                width: 100%;
-                /* Perintah wajib memutus halaman setelah tabel selesai */
-                page-break-after: always !important; 
-                break-after: page !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print, #bottom-nav, aside, header, #login-section, #public-section, #public-detail-modal { display: none !important; }
+            
+            #app-container, main { display: block !important; height: auto !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+            #data-section, #detail-section { display: block !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; border: none !important; }
+            
+            /* HALAMAN 1 (Data) */
+            .print-page1 {
+                page-break-after: always !important; /* Paksa putus halaman setelah blok ini */
+                margin-bottom: 0 !important;
+                padding-bottom: 10px !important;
+                display: block !important;
+            }
+            
+            /* HALAMAN 2 (Foto & TTD) */
+            .print-page2 {
+                page-break-before: always !important; /* Pastikan selalu mulai di kertas baru */
+                display: flex !important;
+                flex-direction: column !important;
+                min-height: 25cm !important; /* Memenuhi panjang vertikal A4 (kotor) */
+                padding-top: 10px !important;
+            }
+            
+            /* Dorong area tanda tangan ke bawah (Halaman 2) */
+            .print-signature {
+                margin-top: auto !important; /* Kekuatan Flexbox */
+                padding-top: 20px;
+                page-break-inside: avoid !important;
             }
 
-            /* Mengatur tabel agar jarak lebar, penuh 1 halaman tapi tidak meluber */
-            .detail-card { margin-bottom: 10px !important; border: 1px solid #000 !important; break-inside: avoid; }
-            .detail-header { background-color: #f3f4f6 !important; border-bottom: 1px solid #000 !important; padding: 6px 10px !important; font-size: 11px !important; font-weight: bold; }
-            .detail-row { border-bottom: 1px solid #000 !important; break-inside: avoid; }
+            .print-header { display: block !important; text-align: center; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #000; padding: 6px 8px; font-size: 10px; text-align: left; vertical-align: top; }
+            th { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; color: black !important; }
+            
+            /* Jarak & Kerapian Cetak KIB */
+            .detail-card { break-inside: avoid; margin-bottom: 12px; border: 1px solid #000 !important; border-radius: 4px; overflow: hidden; }
+            .detail-header { background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; border-bottom: 1px solid #000 !important; padding: 8px 10px !important; font-size: 12px !important; font-weight: bold; }
+            .detail-row { break-inside: avoid; border-bottom: 1px solid #000 !important; display: flex; width: 100%; }
             .detail-row:last-child { border-bottom: none !important; }
             
-            /* Jarak Padding didesain sangat pas untuk tinggi kertas A4 (lebih lebar sesuai permintaan) */
-            .detail-label { background-color: #f9fafb !important; font-weight: bold; width: 35%; padding: 10px 12px !important; border-right: 1px solid #000 !important; font-size: 12px !important; }
-            .detail-value { width: 65%; padding: 10px 12px !important; font-size: 12px !important; }
-
-            /* --- HALAMAN 2 (FOTO & TANDA TANGAN) --- */
-            #detail-content-page2 {
-                display: block !important;
-                width: 100%;
-                /* Perintah wajib mulai di halaman baru */
-                page-break-before: always !important; 
-                break-before: page !important;
-            }
-
-            /* Batasi tinggi gambar maksimal 350px agar tidak menyundul TTD ke halaman 3 */
-            #lampiran-container img {
-                max-height: 350px !important; 
-                object-fit: contain;
-                margin-bottom: 5px !important;
-            }
-
-            /* Mencegah kotak tanda tangan terpotong di tengah */
-            .signature-container { break-inside: avoid; margin-top: 40px !important; }
+            /* Jarak spasi diperlebar (padding) agar penuh di kertas */
+            .detail-label { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; font-weight: bold; width: 35%; padding: 12px 10px !important; border-right: 1px solid #000 !important; text-align: left !important; }
+            .detail-value { width: 65%; padding: 12px 10px !important; text-align: left !important; display: flex; align-items: center; }
+            
+            /* Pembatasan ukuran maksimal foto agar tidak lompat ke halaman 3 */
+            .print-img-container { text-align: center; margin-bottom: 10px; }
+            .print-img-container img { max-height: 8.5cm !important; width: auto !important; max-width: 100% !important; object-fit: contain; border: 1px solid #ccc; border-radius: 4px; }
         }
         .print-header { display: none; }
         
@@ -104,7 +113,7 @@
         .custom-modal:not(.hidden) { opacity: 1; pointer-events: auto; }
     </style>
 </head>
-<body class="text-gray-800 h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="text-gray-800 h-screen flex flex-col md:flex-row overflow-hidden bg-gray-50">
 
     <!-- Modal Konfirmasi Hapus Data -->
     <div id="delete-modal" class="custom-modal fixed inset-0 bg-black/60 z-[100000] hidden flex items-center justify-center p-4 backdrop-blur-sm">
@@ -135,15 +144,18 @@
         </div>
     </div>
 
-    <!-- Halaman Login -->
-    <div id="login-section" class="fixed inset-0 bg-emerald-900 z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 animate-fade-in">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-100">
+    <!-- Halaman Login Modal (Disembunyikan secara default) -->
+    <div id="login-section" class="fixed inset-0 bg-emerald-900/95 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 animate-fade-in relative">
+            <button onclick="closeAdminLogin()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <div class="text-center mb-8 mt-2">
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-100 shadow-inner">
                     <i class="fas fa-leaf text-4xl text-emerald-600"></i>
                 </div>
-                <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Inventaris Baleadi</h1>
-                <p class="text-sm text-gray-500 mt-2 font-medium">Portal Manajemen Aset Desa (KIB)</p>
+                <h1 class="text-2xl font-extrabold text-gray-800 tracking-tight">Login Admin</h1>
+                <p class="text-sm text-gray-500 mt-2 font-medium">Portal Manajemen Aset KIB</p>
             </div>
             
             <div class="mb-6">
@@ -155,9 +167,61 @@
             </div>
             
             <button onclick="checkLogin()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i class="fas fa-sign-in-alt"></i> Masuk Sistem
+                <i class="fas fa-sign-in-alt"></i> Masuk Sistem Admin
             </button>
-            <p class="text-center text-xs text-gray-400 mt-6 font-medium">&copy; 2026 Pemerintah Desa Baleadi</p>
+        </div>
+    </div>
+
+    <!-- Halaman Publik (Pencarian Aset Transparansi) - Default Utama -->
+    <div id="public-section" class="fixed inset-0 bg-gray-50 z-[60] flex flex-col animate-fade-in overflow-y-auto">
+        <!-- Header Publik -->
+        <header class="bg-emerald-900 text-white p-4 md:p-6 shadow-md flex justify-between items-center sticky top-0 z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner">
+                    <i class="fas fa-leaf text-emerald-600 text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg md:text-xl tracking-wide leading-tight">Desa Baleadi</h2>
+                    <p class="text-[10px] md:text-xs text-emerald-300 uppercase tracking-wider font-semibold">Portal Transparansi Aset</p>
+                </div>
+            </div>
+            <button onclick="openAdminLogin()" class="text-emerald-100 hover:text-white flex items-center gap-2 text-xs md:text-sm font-bold bg-emerald-800 hover:bg-emerald-700 px-4 py-2 rounded-xl border border-emerald-700 transition-colors shadow-sm">
+                <span class="hidden md:inline">Login Admin</span> <i class="fas fa-sign-in-alt"></i>
+            </button>
+        </header>
+
+        <!-- Area Pencarian Publik -->
+        <div class="bg-emerald-900 px-6 pb-10 pt-4 rounded-b-[3rem] shadow-xl relative z-10">
+            <div class="max-w-3xl mx-auto text-center mb-6">
+                <h1 class="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">Cari Inventaris Desa</h1>
+                <p class="text-emerald-200 text-sm md:text-base font-medium">Temukan data aset berdasarkan Nama, Hak Pengguna, atau No. Register</p>
+            </div>
+            <div class="max-w-2xl mx-auto relative group">
+                <span class="absolute left-5 top-4.5 md:top-5 text-emerald-500 text-xl transition-colors group-focus-within:text-emerald-700"><i class="fas fa-search"></i></span>
+                <input type="text" id="public-search-input" onkeyup="filterPublicData()" class="w-full pl-14 pr-4 py-4 md:py-5 bg-white rounded-2xl shadow-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/40 text-gray-800 text-base md:text-lg font-bold transition-all placeholder-gray-400" placeholder="Ketik kata kunci pencarian...">
+            </div>
+        </div>
+
+        <!-- Area Hasil Pencarian Publik -->
+        <div class="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full -mt-4 relative z-0 pb-16">
+            <div id="public-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Hasil kartu dimuat oleh JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Publik (Elegan & Bebas Cetak) -->
+    <div id="public-detail-modal" class="custom-modal fixed inset-0 bg-gray-900/80 z-[70] hidden flex items-center justify-center p-4 md:p-6 backdrop-blur-sm">
+        <div class="bg-gray-50 rounded-2xl w-full max-w-4xl shadow-2xl relative my-auto max-h-[90vh] flex flex-col overflow-hidden animate-fade-in border border-gray-200">
+            <div class="p-5 md:p-6 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10 shadow-sm">
+                <h3 id="public-detail-title" class="font-black text-gray-800 text-lg md:text-xl tracking-tight"><i class="fas fa-file-alt text-emerald-600 mr-2"></i> Laporan Individu</h3>
+                <button onclick="closePublicDetail()" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors border border-gray-200 shadow-sm"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="p-4 md:p-6 overflow-y-auto flex-1 custom-scrollbar">
+                <div id="public-detail-content" class="space-y-5">
+                    <!-- Konten KIB Publik dimuat oleh JS -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -197,7 +261,7 @@
         </aside>
 
         <!-- Area Konten Utama -->
-        <main class="flex-1 bg-gray-50 flex flex-col h-full relative overflow-y-auto pb-36">
+        <main class="flex-1 flex flex-col h-full relative overflow-y-auto pb-36 bg-gray-50">
             
             <!-- Header Mobile Saja -->
             <header class="md:hidden bg-emerald-800 text-white p-4 flex justify-between items-center shadow-md sticky top-0 z-10 no-print">
@@ -305,19 +369,14 @@
                                 <h3 class="text-sm md:text-base font-bold text-emerald-800 flex items-center gap-2 uppercase tracking-wide"><i class="fas fa-id-card text-emerald-600 text-lg"></i> 1. Identitas Aset</h3>
                             </div>
                             <div class="p-5 space-y-5">
-                                <!-- Baris 1: Nama Hak Pengguna (Full Width) -->
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Hak Pengguna <span class="text-red-500">*</span></label>
                                     <input type="text" id="t-hakpengguna" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Pemerintah Desa Baleadi">
                                 </div>
-                                
-                                <!-- Baris 2: Nama Tanah (Full Width) -->
                                 <div>
                                     <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Tanah <span class="text-red-500">*</span></label>
                                     <input type="text" id="t-nama" required class="w-full p-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition-all font-medium" placeholder="Contoh: Tanah Lapangan">
                                 </div>
-                                
-                                <!-- Baris 3: Jenis & Alamat -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
                                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Jenis Tanah <span class="text-red-500">*</span></label>
@@ -354,7 +413,6 @@
                             </div>
                             <div class="p-5 space-y-5">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Luas Awal -->
                                     <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
                                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Awal (m²) <span class="text-red-500">*</span></label>
                                         <input type="number" id="t-luas" required class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none mb-3 font-medium" placeholder="Berdasarkan SPPT/Dokumen Awal">
@@ -366,7 +424,6 @@
                                             <input type="hidden" id="t-base64-sppt">
                                         </div>
                                     </div>
-                                    <!-- Luas Sekarang -->
                                     <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
                                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Luas Tanah Sekarang (m²)</label>
                                         <input type="number" id="t-luassekarang" class="w-full p-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none mb-3 font-medium" placeholder="Hasil ukur ulang">
@@ -931,7 +988,7 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto custom-scrollbar pb-2">
                             <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap md:whitespace-normal">
                                 <thead id="table-head" class="bg-gray-100 border-b border-gray-200 text-gray-800 uppercase text-[10px] tracking-wider font-bold">
                                     <!-- Header dinamis -->
@@ -944,7 +1001,7 @@
                     </div>
                 </div>
 
-                <!-- DETAIL INDIVIDU SECTION (Untuk Cetak 1 Aset) -->
+                <!-- DETAIL INDIVIDU SECTION (Untuk Cetak KIB Individu yang Presisi 2 Lembar) -->
                 <div id="detail-section" class="section-container hidden animate-fade-in bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-gray-200 max-w-4xl mx-auto">
                     
                     <div class="flex justify-between items-center mb-6 border-b pb-4 no-print">
@@ -956,36 +1013,39 @@
                         </button>
                     </div>
 
-                    <!-- Area Print Resmi (2 Halaman Ketat) -->
+                    <!-- Area Print Resmi (Rata Atas) -->
                     <div id="print-area-detail" class="text-gray-900 bg-white">
                         
-                        <!-- HALAMAN 1: DATA UTAMA -->
-                        <div class="print-first-page w-full">
-                            <div class="text-center mb-4 border-b-2 border-gray-800 pb-3">
+                        <!-- HALAMAN 1 -->
+                        <div class="print-page1">
+                            <div class="text-center mb-4 border-b-2 border-gray-800 pb-3 mt-4">
                                 <h2 class="text-lg font-bold uppercase tracking-widest">Pemerintah Desa Baleadi</h2>
                                 <h1 id="det-title" class="text-xl font-black uppercase mt-0.5">Kartu Inventaris Barang (KIB)</h1>
                                 <p class="text-xs font-medium mt-0.5">Tahun Anggaran Berjalan</p>
                             </div>
                             
-                            <div id="detail-content" class="pb-4">
-                                <!-- Konten detail tabel (1-5) digenerate via JS -->
+                            <!-- Konten Data (Poin 1 - 5) -->
+                            <div id="detail-content-page1" class="space-y-3">
+                                <!-- Konten detail digenerate via JS -->
                             </div>
                         </div>
 
-                        <!-- HALAMAN 2: LAMPIRAN FOTO & TANDA TANGAN -->
-                        <div id="detail-content-page2" class="w-full pt-6">
-                            <div id="lampiran-container">
-                                <!-- Lampiran foto (6) digenerate via JS -->
+                        <!-- HALAMAN 2 (Foto & Tanda Tangan) -->
+                        <div class="print-page2" id="detail-content-page2-wrapper">
+                            <!-- Lampiran Visual (Poin 6) -->
+                            <div id="detail-content-page2">
+                                <!-- Konten foto digenerate via JS -->
                             </div>
-
-                            <!-- Tanda Tangan terpisah agar selalu di bawah foto pada Halaman 2 -->
-                            <div class="signature-container mt-12 flex justify-end text-center w-full">
-                                <div class="w-56">
-                                    <p class="mb-24 text-sm">Kepala Desa Baleadi,</p>
-                                    <p class="font-bold border-b-2 border-gray-800 inline-block px-4 text-sm w-full">......................................</p>
+                            
+                            <!-- Tanda Tangan (Selalu terdorong ke bawah) -->
+                            <div class="print-signature mt-8 flex justify-end text-center pt-4">
+                                <div class="w-48">
+                                    <p class="mb-16 text-xs">Kepala Desa Baleadi,</p>
+                                    <p class="font-bold border-b border-gray-800 inline-block px-4 text-xs">......................................</p>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -1032,6 +1092,7 @@
             if (document.getElementById('pin-input').value === '789') {
                 sessionStorage.setItem('isLoggedIn', 'true');
                 document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('public-section').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 showToast('Otentikasi Berhasil', 'success');
                 switchTab('dashboard');
@@ -1041,7 +1102,18 @@
                 document.getElementById('pin-input').value = '';
             }
         }
+
         function logout() { sessionStorage.removeItem('isLoggedIn'); location.reload(); }
+
+        // Fungsi Buka / Tutup Modal Login Admin
+        function openAdminLogin() {
+            document.getElementById('login-section').classList.remove('hidden');
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('pin-input').value = '';
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('.section-container').forEach(el => el.classList.add('hidden'));
@@ -1438,18 +1510,22 @@
         async function fetchData() {
             if(!GAS_URL.startsWith('http')) { 
                 document.getElementById('table-body').innerHTML = `<tr><td colspan="15" class="p-8 text-center text-amber-500 font-bold bg-amber-50 border border-amber-200 rounded-xl"><i class="fas fa-exclamation-triangle mb-2 text-2xl"></i><br>Aplikasi dalam mode Pratinjau. Masukkan URL GAS untuk memuat data.</td></tr>`;
+                document.getElementById('public-results').innerHTML = `<div class="col-span-full text-center p-12 bg-amber-50 rounded-2xl border border-amber-200 shadow-sm"><i class="fas fa-exclamation-triangle text-4xl mb-3 text-amber-500"></i><p class="text-amber-700 font-bold">Aplikasi dalam mode Pratinjau. Database belum terhubung.</p></div>`;
                 return; 
             }
             document.getElementById('table-body').innerHTML = `<tr><td colspan="15" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-3xl mb-3 text-emerald-500"></i><br><span class="font-bold">Sinkronisasi Database...</span></td></tr>`;
+            document.getElementById('public-results').innerHTML = `<div class="col-span-full text-center p-12"><i class="fas fa-spinner fa-spin text-4xl mb-3 text-emerald-500"></i><p class="text-gray-500 font-bold">Mengambil data publik...</p></div>`;
             try {
                 const res = await fetch(`${GAS_URL}?action=read`);
                 const result = await res.json();
                 if(result.status === 'success') {
                     inventoryData = result.data || {};
                     filterDataToTable(); updateStats();
+                    filterPublicData();
                 }
             } catch (err) {
                 document.getElementById('table-body').innerHTML = `<tr><td colspan="15" class="p-8 text-center text-red-500 font-bold"><i class="fas fa-wifi mb-2 text-2xl"></i><br>Error jaringan. Pastikan URL GAS & Secret valid.</td></tr>`;
+                document.getElementById('public-results').innerHTML = `<div class="col-span-full text-center p-12 bg-red-50 rounded-2xl border border-red-200 shadow-sm"><i class="fas fa-wifi text-4xl mb-3 text-red-500"></i><p class="text-red-700 font-bold">Gagal terhubung ke database.</p></div>`;
             }
         }
 
@@ -1532,14 +1608,14 @@
                 
                 const actHtml = `<td class="p-3 text-center no-print whitespace-nowrap">
                     <div class="flex items-center justify-center gap-1">
-                        <button onclick="openDetail('${key}')" class="text-emerald-600 hover:text-emerald-800 p-2 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200" title="Cetak KIB Individu"><i class="fas fa-file-invoice"></i></button>
-                        <button onclick="openForm('${editType}', null, '${key}')" class="text-blue-600 hover:text-blue-800 p-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200" title="Ubah/Edit"><i class="fas fa-edit"></i></button>
-                        <button onclick="openDeleteModal('${key}')" class="text-red-500 hover:text-red-700 p-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="openDetail('${key}')" class="text-emerald-600 hover:text-emerald-800 p-2 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200" title="Detail & Cetak"><i class="fas fa-print"></i></button>
+                        <button onclick="openForm('${editType}', null, '${key}')" class="text-blue-600 hover:text-blue-800 p-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200" title="Ubah/Edit Data"><i class="fas fa-edit"></i></button>
+                        <button onclick="openDeleteModal('${key}')" class="text-red-500 hover:text-red-700 p-2 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </td>`;
                 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50 border-b border-gray-100 text-[11px] text-gray-700 transition-colors";
+                tr.className = "hover:bg-emerald-50 border-b border-gray-100 text-[11px] text-gray-700 transition-colors";
                 tr.innerHTML = rowHtml + actHtml; tbody.appendChild(tr);
             });
         }
@@ -1554,21 +1630,25 @@
             const item = currentDetailItem;
             document.getElementById('det-title').innerText = `Kartu Inventaris Barang (KIB ${item.kategori === 'Lahan' ? 'A - Tanah' : (item.kategori === 'Bangunan' ? 'C - Gedung & Bangunan' : 'B - Peralatan & Mesin')})`;
             
-            const content = document.getElementById('detail-content');
-            const lampiranContainer = document.getElementById('lampiran-container');
+            const contentPage1 = document.getElementById('detail-content-page1');
+            const contentPage2 = document.getElementById('detail-content-page2');
+            let sectionsPage1 = '';
+            let sectionsPage2 = '';
             
-            let sections = '';
-            let imageSections = '';
-            
+            // Format HTML Khusus untuk "Nama Hak Pengguna" / Nama Utama agar tebal dan besar
+            const formatSangatTebal = (teks) => `<span class="font-black text-[16px] uppercase">${escapeHTML(teks)}</span>`;
+            const formatBoldBesar = (teks) => `<span class="font-bold text-[14px]">${escapeHTML(teks)}</span>`;
+
+            // TAMPILAN ELEGAN: Mengembalikan kelas pewarnaan dan garis tabel (Tailwind CSS)
             const renderBlock = (title, dataArray) => {
-                let html = `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2">
-                            <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-xs px-3 py-1.5 bg-gray-100 border-b border-gray-300">${title}</div>
-                            <div class="flex flex-col">`;
+                let html = `<div class="detail-card bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm mb-6">
+                            <div class="detail-header bg-gray-100 border-b border-gray-300 px-5 py-3 text-sm font-extrabold text-gray-800 uppercase tracking-wider">${title}</div>
+                            <div class="flex flex-col divide-y divide-gray-200">`;
                 dataArray.forEach(row => {
                     const displayValue = row.isHtml ? row.value : escapeHTML(row.value);
-                    html += `<div class="detail-row flex w-full text-xs border-b border-gray-200 last:border-b-0">
-                                <div class="detail-label p-2 text-gray-700 font-semibold w-1/3 border-r border-gray-200 bg-gray-50">${row.label}</div>
-                                <div class="detail-value p-2 text-gray-900 w-2/3 break-words">${displayValue}</div>
+                    html += `<div class="detail-row flex w-full hover:bg-gray-50/80 transition-colors">
+                                <div class="detail-label w-full sm:w-1/3 bg-gray-50/50 p-3.5 text-sm font-bold text-gray-700 border-r border-transparent sm:border-gray-200">${row.label}</div>
+                                <div class="detail-value w-full sm:w-2/3 p-3.5 text-sm text-gray-900 font-medium break-words">${displayValue}</div>
                              </div>`;
                 });
                 html += `</div></div>`;
@@ -1578,134 +1658,343 @@
             const renderImg = (src, label) => {
                 if(!src) return '';
                 if(src.startsWith('data:application/pdf')) {
-                    return `<div class="text-center p-1.5 border border-gray-300 rounded bg-gray-50 break-inside-avoid">
-                                <i class="fas fa-file-pdf text-2xl text-red-500 mb-1 mt-1 cursor-pointer hover:opacity-80" onclick="viewPhoto('${src}')" title="Pratinjau PDF"></i>
-                                <p class="text-[10px] font-bold text-gray-600 border-t border-gray-200 mt-1 pt-1">${label}</p>
-                                <a href="${src}" download="${label}.pdf" class="text-[9px] text-blue-500 hover:underline no-print">Download PDF</a>
+                    return `<div class="print-img-container flex flex-col items-center justify-center p-4 border border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors h-full">
+                                <i class="fas fa-file-pdf text-4xl text-red-500 mb-2 cursor-pointer hover:scale-110 transition-transform" onclick="viewPhoto('${src}')" title="Pratinjau PDF"></i>
+                                <p class="text-[11px] font-bold text-gray-700 border-t border-gray-200 mt-2 pt-2 w-full text-center">${label}</p>
                             </div>`;
                 }
-                return `<div class="text-center p-1.5 border border-gray-300 rounded bg-gray-50 break-inside-avoid">
-                            <img src="${src}" onclick="viewPhoto('${src}')" class="w-full aspect-[4/3] object-cover rounded border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity no-print" alt="${label}" title="Klik untuk memperbesar">
-                            <img src="${src}" class="hidden print:block w-full aspect-[4/3] object-cover rounded border border-gray-200" alt="${label}">
-                            <p class="text-[10px] font-bold text-gray-700 border-t border-gray-200 mt-1 pt-1 uppercase tracking-wider">${label}</p>
+                return `<div class="print-img-container p-2 border border-gray-300 rounded-xl bg-white shadow-sm group flex flex-col h-full">
+                            <div class="overflow-hidden rounded-lg bg-gray-50 w-full">
+                                <img src="${src}" onclick="viewPhoto('${src}')" class="w-full aspect-[3/4] object-cover cursor-pointer group-hover:scale-105 transition-transform duration-300" alt="${label}" title="Klik untuk memperbesar">
+                            </div>
+                            <p class="text-[11px] font-bold text-gray-800 border-t border-gray-200 mt-3 pt-2 text-center uppercase tracking-wider">${label}</p>
                         </div>`;
             };
             
             const buatLinkPeta = (koordinat) => {
                 if (!koordinat || koordinat.trim() === '') return '-';
-                return `${escapeHTML(koordinat)} <a href="https://maps.google.com/?q=${escapeHTML(koordinat)}" target="_blank" class="text-blue-600 hover:underline font-bold ml-2 no-print bg-blue-50 px-2 py-0.5 rounded border border-blue-200 transition-colors hover:bg-blue-100 inline-block mt-1 sm:mt-0"><i class="fas fa-map-marked-alt"></i> Buka Google Maps</a>`;
+                return `${escapeHTML(koordinat)} <a href="https://maps.google.com/?q=${escapeHTML(koordinat)}" target="_blank" class="text-blue-600 hover:underline font-bold ml-2 no-print bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 transition-colors hover:bg-blue-100 inline-block mt-2 sm:mt-0 shadow-sm"><i class="fas fa-map-marked-alt"></i> Buka Peta</a>`;
             };
             
+            // HALAMAN 1: IDENTITAS (1-5)
+            if(item.kategori === 'Lahan') {
+                sectionsPage1 += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Hak Pengguna', value: formatSangatTebal(item.hakPengguna), isHtml: true },
+                    { label: 'Nama Tanah', value: formatBoldBesar(item.nama), isHtml: true },
+                    { label: 'Jenis Tanah', value: item.jenisTanah }, { label: 'Alamat / Lokasi', value: item.alamatLokasi },
+                    { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
+                ]);
+                sectionsPage1 += renderBlock('2. Spesifikasi Fisik', [
+                    { label: 'Luas Tanah Awal', value: item.luas ? item.luas + ' m²' : '-' }, { label: 'Luas Tanah Sekarang', value: item.luasSekarang ? `<span class="font-bold">${item.luasSekarang} m²</span>` : '-', isHtml: true },
+                    { label: 'Batas Utara', value: item.batasUtara }, { label: 'Batas Selatan', value: item.batasSelatan },
+                    { label: 'Batas Timur', value: item.batasTimur }, { label: 'Batas Barat', value: item.batasBarat }
+                ]);
+                sectionsPage1 += renderBlock('3. Legalitas / Sertifikat', [
+                    { label: 'Status Hak', value: item.kondisi }, { label: 'Nomor Sertifikat/Girik', value: item.noSertifikat }, { label: 'Tanggal Penerbitan', value: item.tglSertifikat }
+                ]);
+                sectionsPage1 += renderBlock('4. Administrasi', [
+                    { label: 'Asal Usul', value: item.asalUsul }, { label: 'Tahun Perolehan', value: item.tahunPerolehan },
+                    { label: 'Harga Perolehan', value: item.harga ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga) : '-' }, { label: 'Penggunaan', value: item.penggunaan }
+                ]);
+                sectionsPage1 += renderBlock('5. Titik Lokasi', [
+                    { label: 'Titik Koordinat', value: buatLinkPeta(item.koordinat), isHtml: true }
+                ]);
+                
+                // HALAMAN 2: VISUAL LAMPIRAN (6)
+                let imgGroup = '';
+                const f1 = renderImg(item.foto, 'Foto Utama Lahan'); const f2 = renderImg(item.foto2, 'Foto Tambahan');
+                const s = renderImg(item.buktiSppt, 'Bukti SPPT / Pajak'); const u = renderImg(item.buktiUkur, 'Bukti Hasil Ukur');
+                const b = renderImg(item.buktiBatas, 'Bukti Batas Lokasi'); const c = renderImg(item.buktiSertifikat, 'Bukti Sertifikat / Letter C');
+
+                if (f1 || f2) imgGroup += `<div class="mb-4"><p class="text-sm font-bold text-gray-800 mb-2 border-b border-gray-400 pb-1">A. Foto Lahan</p><div class="grid grid-cols-2 gap-4">${f1}${f2}</div></div>`;
+                if (s || u) imgGroup += `<div class="mb-4"><p class="text-sm font-bold text-gray-800 mb-2 border-b border-gray-400 pb-1">B. Bukti Administrasi</p><div class="grid grid-cols-2 gap-4">${s}${u}</div></div>`;
+                if (b || c) imgGroup += `<div class="mb-4"><p class="text-sm font-bold text-gray-800 mb-2 border-b border-gray-400 pb-1">C. Bukti Legalitas</p><div class="grid grid-cols-2 gap-4">${b}${c}</div></div>`;
+
+                if(imgGroup) {
+                    sectionsPage2 += `<div class="detail-card bg-white">
+                                    <div class="detail-header">6. Lampiran & Dokumentasi Visual</div>
+                                    <div class="p-4">${imgGroup}</div>
+                                 </div>`;
+                }
+            } else if (item.kategori === 'Bangunan') {
+                sectionsPage1 += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Bangunan', value: formatSangatTebal(item.nama), isHtml: true }, { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
+                ]);
+                sectionsPage1 += renderBlock('2. Spesifikasi Fisik', [
+                    { label: 'Luas Lantai', value: item.luas ? item.luas + ' m²' : '-' }, { label: 'Jumlah Lantai', value: item.lantai }, { label: 'Letak / Alamat', value: item.alamat }
+                ]);
+                sectionsPage1 += renderBlock('3. Spesifikasi Teknis', [
+                    { label: 'Jenis Konstruksi', value: item.konstruksi }, { label: 'Kondisi Bangunan', value: item.kondisi }
+                ]);
+                sectionsPage1 += renderBlock('4. Legalitas & Dokumen', [
+                    { label: 'Nomor Dokumen (IMB/PBG)', value: item.noImb }, { label: 'Tanggal Dokumen', value: item.tglImb }
+                ]);
+                sectionsPage1 += renderBlock('5. Administrasi & Lokasi', [
+                    { label: 'Tahun Pembuatan / Pembelian', value: `${item.tahunBuat || '-'} / ${item.tahunBeli || '-'}` },
+                    { label: 'Asal Usul', value: item.asalUsul }, { label: 'Nilai (Harga)', value: item.nilai ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.nilai) : '-' },
+                    { label: 'Titik Koordinat', value: buatLinkPeta(item.koordinat), isHtml: true }
+                ]);
+                if(item.foto) {
+                    sectionsPage2 += `<div class="detail-card bg-white">
+                                    <div class="detail-header">6. Dokumentasi Visual</div>
+                                    <div class="p-4 grid grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Bangunan / Gedung')}</div>
+                                 </div>`;
+                }
+            } else if (item.kategori === 'Peralatan') {
+                sectionsPage1 += renderBlock('1. Identitas Aset', [
+                    { label: 'Nama Barang', value: formatSangatTebal(item.nama), isHtml: true }, { label: 'Merk / Tipe', value: item.merk }, { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
+                ]);
+                sectionsPage1 += renderBlock('2. Spesifikasi Teknis', [
+                    { label: 'Ukuran / CC', value: item.ukuran }, { label: 'Warna', value: item.warna }, { label: 'Bahan Baku', value: item.bahan },
+                    { label: 'Nomor Rangka', value: item.noRangka }, { label: 'Nomor Mesin', value: item.noMesin }
+                ]);
+                sectionsPage1 += renderBlock('3. Administrasi', [
+                    { label: 'Tahun Buat / Beli', value: `${item.tahunBuat || '-'} / ${item.tahunBeli || '-'}` },
+                    { label: 'Asal Usul', value: item.asalUsul }, { label: 'Harga', value: item.harga ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga) : '-' }
+                ]);
+                sectionsPage1 += renderBlock('4. Kondisi', [
+                    { label: 'Kondisi Barang', value: item.kondisi }, { label: 'Lokasi / Penanggung Jawab', value: item.lokasi }
+                ]);
+                if(item.foto) {
+                    sectionsPage2 += `<div class="detail-card bg-white">
+                                    <div class="detail-header">5. Dokumentasi Visual</div>
+                                    <div class="p-4 grid grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Peralatan & Mesin')}</div>
+                                 </div>`;
+                }
+            }
+            
+            contentPage1.innerHTML = sectionsPage1;
+            
+            // Smart Break: Hanya tampilkan Halaman 2 jika ada Foto
+            const page2Wrapper = document.getElementById('detail-content-page2-wrapper');
+            if (sectionsPage2 !== '') {
+                contentPage2.innerHTML = sectionsPage2;
+                page2Wrapper.style.display = 'flex'; // Kembalikan ke normal
+            } else {
+                contentPage2.innerHTML = '';
+                // Sembunyikan halaman 2 dan letakkan TTD langsung di akhir Halaman 1
+                page2Wrapper.style.display = 'block'; 
+                page2Wrapper.classList.remove('print-page2');
+            }
+        }
+
+        // ============================================
+        // LOGIKA MENU PUBLIK (TRANSPARANSI & PENCARIAN)
+        // ============================================
+        function filterPublicData() {
+            const searchTerm = document.getElementById('public-search-input').value.toLowerCase();
+            const container = document.getElementById('public-results');
+            container.innerHTML = '';
+            
+            if(!inventoryData || Object.keys(inventoryData).length === 0) return;
+
+            let found = 0;
+            const keys = Object.keys(inventoryData).reverse();
+            
+            keys.forEach(key => {
+                const item = inventoryData[key];
+                
+                // Pencarian Cerdas (Nama + Hak Pengguna + Register)
+                const searchString = `${item.nama || ''} ${item.hakPengguna || ''} ${item.register || ''}`.toLowerCase();
+                if (searchTerm && !searchString.includes(searchTerm)) return;
+
+                found++;
+                const isTanah = item.kategori === 'Lahan';
+                const isBangunan = item.kategori === 'Bangunan';
+                
+                const icon = isTanah ? 'fa-map-marked-alt text-emerald-600' : (isBangunan ? 'fa-building text-blue-600' : 'fa-tractor text-amber-600');
+                const badge = isTanah ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : (isBangunan ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-amber-100 text-amber-800 border-amber-200');
+                const bgHover = isTanah ? 'hover:border-emerald-300' : (isBangunan ? 'hover:border-blue-300' : 'hover:border-amber-300');
+                const iconBg = isTanah ? 'bg-emerald-50 border-emerald-100' : (isBangunan ? 'bg-blue-50 border-blue-100' : 'bg-amber-50 border-amber-100');
+
+                let secondaryText = '';
+                if(isTanah) secondaryText = `<i class="fas fa-user-tag text-emerald-500 w-4"></i> Pengguna: <span class="font-bold">${escapeHTML(item.hakPengguna)}</span>`;
+                else if(isBangunan) secondaryText = `<i class="fas fa-map-marker-alt text-blue-500 w-4"></i> Lokasi: ${escapeHTML(item.alamat)}`;
+                else secondaryText = `<i class="fas fa-tags text-amber-500 w-4"></i> Merk: ${escapeHTML(item.merk)}`;
+
+                container.innerHTML += `
+                    <div onclick="openPublicDetail('${key}')" class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer flex flex-col gap-4 group relative overflow-hidden ${bgHover}">
+                        <div class="absolute -right-6 -top-6 w-32 h-32 rounded-full z-0 opacity-10 transition-transform group-hover:scale-150 ${isTanah ? 'bg-emerald-500' : (isBangunan ? 'bg-blue-500' : 'bg-amber-500')}"></div>
+                        <div class="flex justify-between items-start z-10">
+                            <div class="w-14 h-14 rounded-2xl ${iconBg} flex items-center justify-center text-3xl border shadow-inner"><i class="fas ${icon}"></i></div>
+                            <span class="text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full border shadow-sm ${badge}">${item.kategori}</span>
+                        </div>
+                        <div class="z-10 mt-1">
+                            <h3 class="font-extrabold text-gray-800 text-xl leading-tight mb-2 group-hover:text-emerald-700 transition-colors">${escapeHTML(item.nama)}</h3>
+                            <div class="space-y-1">
+                                <p class="text-xs text-gray-600 truncate">${secondaryText}</p>
+                                <p class="text-xs font-semibold text-gray-500 truncate"><i class="fas fa-barcode text-gray-400 w-4"></i> Register: ${escapeHTML(item.register)}</p>
+                            </div>
+                        </div>
+                        <div class="z-10 mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ketuk untuk detail</span>
+                            <div class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if(found === 0) {
+                container.innerHTML = `
+                <div class="col-span-full text-center p-16 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center">
+                    <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-inner">
+                        <i class="fas fa-search-minus text-4xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">Aset tidak ditemukan</h3>
+                    <p class="text-gray-500 font-medium text-sm max-w-md">Tidak ada data yang cocok dengan pencarian Anda. Coba kata kunci lain.</p>
+                </div>`;
+            }
+        }
+
+        function openPublicDetail(key) {
+            const item = inventoryData[key];
+            if(!item) return;
+            
+            document.getElementById('public-detail-modal').classList.remove('hidden');
+            
+            const catName = item.kategori === 'Lahan' ? 'Tanah (KIB A)' : (item.kategori === 'Bangunan' ? 'Gedung & Bangunan (KIB C)' : 'Peralatan & Mesin (KIB B)');
+            document.getElementById('public-detail-title').innerHTML = `<i class="fas fa-file-alt text-emerald-600 mr-2"></i> Detail ${catName}`;
+
+            const content = document.getElementById('public-detail-content');
+            let sections = '';
+            
+            // Format HTML Elegan Khusus UI Layar (Tanpa Tabel Cetak)
+            const renderBlock = (title, dataArray) => {
+                let html = `<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-5">
+                    <div class="bg-emerald-50/50 border-b border-gray-200 px-5 py-3 font-extrabold text-emerald-800 uppercase tracking-widest text-[11px] flex items-center gap-2">
+                        <i class="fas fa-info-circle text-emerald-500"></i> ${title}
+                    </div>
+                    <div class="flex flex-col divide-y divide-gray-100">`;
+                
+                dataArray.forEach(row => {
+                    const displayValue = row.isHtml ? row.value : escapeHTML(row.value);
+                    html += `
+                        <div class="flex flex-col sm:flex-row hover:bg-gray-50/80 transition-colors group">
+                            <div class="w-full sm:w-1/3 bg-gray-50/30 p-3.5 text-xs sm:text-sm font-bold text-gray-500 border-r border-transparent sm:border-gray-100 group-hover:text-gray-700 transition-colors">${row.label}</div>
+                            <div class="w-full sm:w-2/3 p-3.5 text-xs sm:text-sm font-semibold text-gray-900 break-words">${displayValue}</div>
+                        </div>`;
+                });
+                html += `</div></div>`;
+                return html;
+            };
+
+            const renderImg = (src, label) => {
+                if(!src) return '';
+                if(src.startsWith('data:application/pdf')) {
+                    return `<div class="text-center p-4 border border-gray-200 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md transition-all">
+                                <i class="fas fa-file-pdf text-4xl text-red-500 mb-3 mt-2 cursor-pointer hover:scale-110 transition-transform" onclick="viewPhoto('${src}')" title="Pratinjau PDF"></i>
+                                <p class="text-xs font-bold text-gray-800 mt-2">${label}</p>
+                                <a href="${src}" download="${label}.pdf" class="text-[10px] text-blue-600 font-bold hover:underline mt-1 bg-blue-50 px-3 py-1 rounded-full inline-block">Download PDF</a>
+                            </div>`;
+                }
+                return `<div class="text-center p-2 border border-gray-200 rounded-2xl bg-white shadow-sm group overflow-hidden">
+                            <div class="overflow-hidden rounded-xl bg-gray-50">
+                                <img src="${src}" onclick="viewPhoto('${src}')" class="w-full aspect-[4/3] object-cover cursor-pointer group-hover:scale-110 transition-transform duration-500" alt="${label}" title="Perbesar Gambar">
+                            </div>
+                            <p class="text-[11px] font-extrabold text-gray-700 mt-3 mb-1 uppercase tracking-wider">${label}</p>
+                        </div>`;
+            };
+
+            const buatLinkPeta = (koordinat) => {
+                if (!koordinat || koordinat.trim() === '') return '-';
+                return `${escapeHTML(koordinat)} <a href="https://maps.google.com/?q=${escapeHTML(koordinat)}" target="_blank" class="text-blue-600 hover:underline font-bold ml-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 transition-colors hover:bg-blue-100 inline-flex items-center gap-1 mt-2 sm:mt-0 shadow-sm"><i class="fas fa-map-marked-alt"></i> Buka Peta</a>`;
+            };
+            
+            // Menyusun konten Modal Publik
             if(item.kategori === 'Lahan') {
                 sections += renderBlock('1. Identitas Aset', [
-                    // Memberikan huruf tebal dan besar khusus pada field yang diminta
-                    { label: 'Nama Hak Pengguna', value: `<span class="font-black text-sm print:text-[14px] uppercase">${escapeHTML(item.hakPengguna)}</span>`, isHtml: true },
-                    { label: 'Nama Tanah', value: item.nama },
-                    { label: 'Jenis Tanah', value: item.jenisTanah },
-                    { label: 'Alamat / Lokasi', value: item.alamatLokasi },
-                    { label: 'Nomor Kode Barang', value: item.kodeBarang },
-                    { label: 'Nomor Register', value: item.register }
+                    { label: 'Nama Hak Pengguna', value: `<span class="font-black text-sm uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100">${escapeHTML(item.hakPengguna)}</span>`, isHtml: true },
+                    { label: 'Nama Tanah', value: `<span class="font-bold text-gray-900">${escapeHTML(item.nama)}</span>`, isHtml: true },
+                    { label: 'Jenis Tanah', value: item.jenisTanah }, { label: 'Alamat / Lokasi', value: item.alamatLokasi },
+                    { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
                 ]);
                 sections += renderBlock('2. Spesifikasi Fisik', [
-                    { label: 'Luas Tanah Awal', value: item.luas ? item.luas + ' m²' : '-' },
-                    { label: 'Luas Tanah Sekarang', value: item.luasSekarang ? item.luasSekarang + ' m²' : '-' },
-                    { label: 'Batas Utara', value: item.batasUtara },
-                    { label: 'Batas Selatan', value: item.batasSelatan },
-                    { label: 'Batas Timur', value: item.batasTimur },
-                    { label: 'Batas Barat', value: item.batasBarat }
+                    { label: 'Luas Tanah Awal', value: item.luas ? item.luas + ' m²' : '-' }, { label: 'Luas Tanah Sekarang', value: item.luasSekarang ? `<span class="font-bold text-emerald-600">${item.luasSekarang} m²</span>` : '-' , isHtml: true},
+                    { label: 'Batas Utara', value: item.batasUtara }, { label: 'Batas Selatan', value: item.batasSelatan },
+                    { label: 'Batas Timur', value: item.batasTimur }, { label: 'Batas Barat', value: item.batasBarat }
                 ]);
                 sections += renderBlock('3. Legalitas / Sertifikat', [
-                    { label: 'Status Hak', value: item.kondisi },
-                    { label: 'Nomor Sertifikat/Girik', value: item.noSertifikat },
-                    { label: 'Tanggal Penerbitan', value: item.tglSertifikat }
+                    { label: 'Status Hak', value: item.kondisi }, { label: 'Nomor Sertifikat', value: item.noSertifikat }, { label: 'Tanggal Penerbitan', value: item.tglSertifikat }
                 ]);
                 sections += renderBlock('4. Administrasi', [
-                    { label: 'Asal Usul', value: item.asalUsul },
-                    { label: 'Tahun Perolehan', value: item.tahunPerolehan },
-                    { label: 'Harga Perolehan', value: item.harga ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga) : '-' },
-                    { label: 'Penggunaan', value: item.penggunaan }
+                    { label: 'Asal Usul', value: item.asalUsul }, { label: 'Tahun Perolehan', value: item.tahunPerolehan },
+                    { label: 'Harga Perolehan', value: item.harga ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga) : '-' }, { label: 'Penggunaan', value: item.penggunaan }
                 ]);
                 sections += renderBlock('5. Titik Lokasi', [
                     { label: 'Titik Koordinat', value: buatLinkPeta(item.koordinat), isHtml: true }
                 ]);
                 
                 let imgGroup = '';
-                const f1 = renderImg(item.foto, 'Foto Utama Lahan');
-                const f2 = renderImg(item.foto2, 'Foto Lahan (Tambahan)');
-                const s = renderImg(item.buktiSppt, 'Bukti SPPT / Pajak');
-                const u = renderImg(item.buktiUkur, 'Bukti Hasil Pengukuran');
-                const b = renderImg(item.buktiBatas, 'Bukti Batas Lokasi');
-                const c = renderImg(item.buktiSertifikat, 'Bukti Sertifikat / Letter C');
+                const f1 = renderImg(item.foto, 'Foto Utama Lahan'); const f2 = renderImg(item.foto2, 'Foto Tambahan');
+                const s = renderImg(item.buktiSppt, 'Bukti SPPT / Pajak'); const u = renderImg(item.buktiUkur, 'Bukti Hasil Ukur');
+                const b = renderImg(item.buktiBatas, 'Bukti Batas'); const c = renderImg(item.buktiSertifikat, 'Bukti Sertifikat');
 
-                if (f1 || f2) { imgGroup += `<div class="mb-2 break-inside-avoid"><p class="text-xs font-bold text-gray-700 mb-1">Foto Lahan</p><div class="grid grid-cols-2 gap-2">${f1}${f2}</div></div>`; }
-                if (s || u) { imgGroup += `<div class="mb-2 break-inside-avoid"><p class="text-xs font-bold text-gray-700 mb-1">Bukti SPPT & Ukur</p><div class="grid grid-cols-2 gap-2">${s}${u}</div></div>`; }
-                if (b || c) { imgGroup += `<div class="mb-2 break-inside-avoid"><p class="text-xs font-bold text-gray-700 mb-1">Bukti Batas & Sertifikat</p><div class="grid grid-cols-2 gap-2">${b}${c}</div></div>`; }
+                if (f1 || f2) imgGroup += `<div class="mb-4"><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-2">Foto Lahan</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${f1}${f2}</div></div>`;
+                if (s || u) imgGroup += `<div class="mb-4"><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-2">Bukti Pengukuran</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${s}${u}</div></div>`;
+                if (b || c) imgGroup += `<div class="mb-4"><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b pb-2">Bukti Legalitas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${b}${c}</div></div>`;
 
                 if(imgGroup) {
-                    imageSections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2 break-inside-avoid border-0">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border border-gray-300">6. Lampiran & Dokumentasi Visual</div>
-                                    <div class="p-3 border border-t-0 border-gray-300 rounded-b-lg">${imgGroup}</div>
+                    sections += `<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-5">
+                                    <div class="bg-emerald-50/50 border-b border-gray-200 px-5 py-3 font-extrabold text-emerald-800 uppercase tracking-widest text-[11px] flex items-center gap-2"><i class="fas fa-camera text-emerald-500"></i> 6. Lampiran Visual</div>
+                                    <div class="p-5 bg-gray-50/30">${imgGroup}</div>
                                  </div>`;
                 }
-
             } else if (item.kategori === 'Bangunan') {
                 sections += renderBlock('1. Identitas Aset', [
-                    { label: 'Nama Bangunan', value: `<span class="font-black text-sm print:text-[14px] uppercase">${escapeHTML(item.nama)}</span>`, isHtml: true },
+                    { label: 'Nama Bangunan', value: `<span class="font-bold text-gray-900">${escapeHTML(item.nama)}</span>`, isHtml: true },
                     { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
                 ]);
                 sections += renderBlock('2. Spesifikasi Fisik', [
-                    { label: 'Luas Lantai', value: item.luas ? item.luas + ' m²' : '-' }, { label: 'Jumlah Lantai', value: item.lantai }, { label: 'Letak / Alamat', value: item.alamat }
+                    { label: 'Luas Lantai', value: item.luas ? item.luas + ' m²' : '-' }, { label: 'Jumlah Lantai', value: item.lantai }, { label: 'Alamat', value: item.alamat }
                 ]);
                 sections += renderBlock('3. Spesifikasi Teknis', [
-                    { label: 'Jenis Konstruksi', value: item.konstruksi }, { label: 'Kondisi Bangunan', value: item.kondisi }
+                    { label: 'Jenis Konstruksi', value: item.konstruksi }, { label: 'Kondisi', value: item.kondisi }
                 ]);
                 sections += renderBlock('4. Legalitas & Dokumen', [
-                    { label: 'Nomor Dokumen (IMB/PBG)', value: item.noImb }, { label: 'Tanggal Dokumen', value: item.tglImb }
+                    { label: 'Nomor IMB/PBG', value: item.noImb }, { label: 'Tanggal Dokumen', value: item.tglImb }
                 ]);
                 sections += renderBlock('5. Administrasi & Lokasi', [
-                    { label: 'Tahun Pembuatan', value: item.tahunBuat }, { label: 'Tahun Pembelian', value: item.tahunBeli },
+                    { label: 'Tahun Pembuatan/Beli', value: `${item.tahunBuat || '-'} / ${item.tahunBeli || '-'}` },
                     { label: 'Asal Usul', value: item.asalUsul }, { label: 'Nilai (Harga)', value: item.nilai ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.nilai) : '-' },
                     { label: 'Titik Koordinat', value: buatLinkPeta(item.koordinat), isHtml: true }
                 ]);
                 if(item.foto) {
-                    imageSections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2 break-inside-avoid border-0">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border border-gray-300">6. Dokumentasi Visual</div>
-                                    <div class="p-3 border border-t-0 border-gray-300 rounded-b-lg grid grid-cols-2 gap-2">${renderImg(item.foto, 'Foto Bangunan / Gedung')}</div>
+                    sections += `<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-5">
+                                    <div class="bg-emerald-50/50 border-b border-gray-200 px-5 py-3 font-extrabold text-emerald-800 uppercase tracking-widest text-[11px] flex items-center gap-2"><i class="fas fa-camera text-emerald-500"></i> 6. Lampiran Visual</div>
+                                    <div class="p-5 bg-gray-50/30 grid grid-cols-1 sm:grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Bangunan')}</div>
                                  </div>`;
                 }
             } else if (item.kategori === 'Peralatan') {
                 sections += renderBlock('1. Identitas Aset', [
-                    { label: 'Nama Barang', value: `<span class="font-black text-sm print:text-[14px] uppercase">${escapeHTML(item.nama)}</span>`, isHtml: true }, 
+                    { label: 'Nama Barang', value: `<span class="font-bold text-gray-900">${escapeHTML(item.nama)}</span>`, isHtml: true },
                     { label: 'Merk / Tipe', value: item.merk }, { label: 'Nomor Kode Barang', value: item.kodeBarang }, { label: 'Nomor Register', value: item.register }
                 ]);
                 sections += renderBlock('2. Spesifikasi Teknis', [
-                    { label: 'Ukuran / CC', value: item.ukuran }, { label: 'Warna', value: item.warna }, { label: 'Bahan Baku', value: item.bahan },
-                    { label: 'Nomor Rangka', value: item.noRangka }, { label: 'Nomor Mesin', value: item.noMesin }
+                    { label: 'Ukuran/CC', value: item.ukuran }, { label: 'Warna', value: item.warna }, { label: 'Bahan Baku', value: item.bahan },
+                    { label: 'No Rangka / Mesin', value: `${item.noRangka || '-'} / ${item.noMesin || '-'}` }
                 ]);
                 sections += renderBlock('3. Administrasi', [
-                    { label: 'Tahun Pembuatan', value: item.tahunBuat }, { label: 'Tahun Pembelian', value: item.tahunBeli },
+                    { label: 'Tahun Buat/Beli', value: `${item.tahunBuat || '-'} / ${item.tahunBeli || '-'}` },
                     { label: 'Asal Usul', value: item.asalUsul }, { label: 'Harga', value: item.harga ? 'Rp ' + new Intl.NumberFormat('id-ID').format(item.harga) : '-' }
                 ]);
                 sections += renderBlock('4. Kondisi & Lokasi', [
-                    { label: 'Kondisi Barang', value: item.kondisi }, { label: 'Lokasi / Penanggung Jawab', value: item.lokasi }
+                    { label: 'Kondisi Barang', value: item.kondisi }, { label: 'Lokasi / PJ', value: item.lokasi }
                 ]);
                 if(item.foto) {
-                    imageSections += `<div class="detail-card rounded-lg overflow-hidden border border-gray-300 bg-white mb-2 break-inside-avoid border-0">
-                                    <div class="detail-header font-bold text-gray-800 uppercase tracking-wider text-sm px-4 py-2 bg-gray-100 border border-gray-300">5. Dokumentasi Visual</div>
-                                    <div class="p-3 border border-t-0 border-gray-300 rounded-b-lg grid grid-cols-2 gap-2">${renderImg(item.foto, 'Foto Peralatan & Mesin')}</div>
+                    sections += `<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm mb-5">
+                                    <div class="bg-emerald-50/50 border-b border-gray-200 px-5 py-3 font-extrabold text-emerald-800 uppercase tracking-widest text-[11px] flex items-center gap-2"><i class="fas fa-camera text-emerald-500"></i> 5. Lampiran Visual</div>
+                                    <div class="p-5 bg-gray-50/30 grid grid-cols-1 sm:grid-cols-2 gap-4">${renderImg(item.foto, 'Foto Barang')}</div>
                                  </div>`;
                 }
             }
             
-            // Render ke wadah Halaman 1
             content.innerHTML = sections;
-            
-            // Render ke wadah Halaman 2
-            if(imageSections === '') {
-                lampiranContainer.innerHTML = `<div class="p-4 border border-dashed border-gray-400 rounded bg-gray-50 text-center"><p class="text-gray-500 text-xs italic">Tidak ada lampiran foto/dokumen visual untuk aset ini.</p></div>`;
-            } else {
-                lampiranContainer.innerHTML = imageSections;
-            }
+        }
+
+        function closePublicDetail() {
+            document.getElementById('public-detail-modal').classList.add('hidden');
         }
 
         function openDeleteModal(id) {
@@ -1797,8 +2086,17 @@
         window.onload = function() {
             if(sessionStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('public-section').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
-                switchTab('dashboard'); fetchData();
+                switchTab('dashboard'); 
+                fetchData();
+            } else {
+                // Tampilkan Beranda Publik sebagai default awal
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('public-section').classList.remove('hidden');
+                document.getElementById('public-section').classList.add('flex');
+                document.getElementById('app-container').classList.add('hidden');
+                fetchData(); 
             }
         }
     </script>

@@ -7,7 +7,7 @@
     
     <!-- PWA Basic Setup -->
     <meta name="theme-color" content="#065f46">
-    <link rel="icon" href="https://iconlogovector.com/uploads/images/2023/05/lg-7a116e440beef837de89a7c106161fc860.jpg" />
+    <link rel="icon" href="https://iconlogovector.com/uploads/images/2023/05/lg-7a116e440beef837de89a7c106161fc860.jpg"">
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -882,6 +882,9 @@
             const term = document.getElementById('public-search').value.toLowerCase();
             const container = document.getElementById('public-results');
             const emptyState = document.getElementById('public-empty');
+            
+            // Mengatur celah (gap) agar lebih rapat menyesuaikan card yang lebih kecil
+            container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4";
             container.innerHTML = '';
             
             let results = [];
@@ -906,27 +909,26 @@
                     let color = item.kategori === 'Lahan' ? 'emerald' : (item.kategori === 'Bangunan' ? 'blue' : 'amber');
                     
                     const card = document.createElement('div');
-                    card.className = `bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all border border-gray-100 cursor-pointer group flex flex-col justify-between h-full`;
+                    // Tampilan baru: Lebih kecil (p-3.5), horizontal list, aksen garis di pinggir, dan efek hover menarik
+                    card.className = `bg-white rounded-xl p-3.5 shadow-sm hover:shadow-md hover:border-${color}-300 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group flex items-center gap-3.5 border border-gray-100 relative overflow-hidden`;
                     card.onclick = () => openPublicDetail(result.key);
                     card.innerHTML = `
-                        <div>
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-${color}-50 flex items-center justify-center text-${color}-600 text-xl group-hover:scale-110 transition-transform">
-                                    <i class="fas ${icon}"></i>
-                                </div>
-                                <span class="px-2.5 py-1 bg-${color}-100 text-${color}-800 text-[10px] font-bold rounded-lg uppercase tracking-wider">${item.kategori}</span>
-                            </div>
-                            <h3 class="font-bold text-gray-900 text-lg leading-tight mb-1">${escapeHTML(item.nama)}</h3>
-                            <p class="text-xs text-gray-500 font-medium mb-4">${escapeHTML(item.hakPengguna || item.merk || item.konstruksi || '-')}</p>
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-${color}-400 group-hover:bg-${color}-600 transition-colors"></div>
+                        <div class="w-12 h-12 rounded-xl bg-${color}-50 border border-${color}-100 flex-shrink-0 flex items-center justify-center text-${color}-600 text-lg group-hover:scale-110 group-hover:bg-${color}-100 transition-all shadow-inner">
+                            <i class="fas ${icon}"></i>
                         </div>
-                        <div class="pt-4 border-t border-gray-100 flex justify-between items-center mt-auto">
-                            <div>
-                                <p class="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Register</p>
-                                <p class="text-sm font-bold text-gray-700">${escapeHTML(item.register || '-')}</p>
+                        <div class="flex-1 min-w-0 py-0.5">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="px-2 py-0.5 bg-${color}-100/80 text-${color}-700 text-[9px] font-extrabold rounded-md uppercase tracking-wider border border-${color}-200/50">${item.kategori}</span>
+                                <span class="text-[9px] text-gray-500 font-bold bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 truncate ml-2">Reg: ${escapeHTML(item.register || '-')}</span>
                             </div>
-                            <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-${color}-500 group-hover:text-white transition-colors">
-                                <i class="fas fa-chevron-right text-xs"></i>
-                            </div>
+                            <h3 class="font-bold text-gray-800 text-sm truncate leading-tight group-hover:text-${color}-700 transition-colors">${escapeHTML(item.nama)}</h3>
+                            <p class="text-[10px] text-gray-500 font-medium truncate mt-1 flex items-center gap-1.5">
+                                <i class="fas fa-info-circle text-[9px] opacity-60"></i> ${escapeHTML(item.hakPengguna || item.merk || item.konstruksi || '-')}
+                            </p>
+                        </div>
+                        <div class="w-7 h-7 rounded-full bg-gray-50 flex-shrink-0 flex items-center justify-center text-gray-400 group-hover:bg-${color}-500 group-hover:text-white transition-colors shadow-sm border border-gray-200 group-hover:border-${color}-500">
+                            <i class="fas fa-chevron-right text-xs"></i>
                         </div>
                     `;
                     container.appendChild(card);
@@ -1279,8 +1281,33 @@
                             document.getElementById(b64[i]).value = editData[imgFields[i]];
                         }
                     }
-                } 
-                // Logika edit bangunan & peralatan di-skip untuk singkatnya, fungsi submit akan menggunakan data HTML
+                } else if (type === 'bangunan') {
+                    document.getElementById('title-form-bangunan').innerText = "Edit Data Bangunan";
+                    document.getElementById('b-id').value = editId;
+                    ['nama', 'kode', 'register', 'luas', 'lantai', 'alamat', 'konstruksi', 'kondisi', 'noimb', 'tglimb', 'tahunbuat', 'tahunbeli', 'asal', 'nilai', 'koordinat'].forEach(k => {
+                        const dbKey = { 'kode': 'kodeBarang', 'noimb': 'noImb', 'tglimb': 'tglImb', 'tahunbuat': 'tahunBuat', 'tahunbeli': 'tahunBeli', 'asal': 'asalUsul' }[k] || k;
+                        if(document.getElementById('b-' + k)) document.getElementById('b-' + k).value = editData[dbKey] || '';
+                    });
+                    if (editData.foto) {
+                        document.getElementById('b-preview').src = editData.foto;
+                        document.getElementById('b-preview').classList.remove('hidden');
+                        document.getElementById('b-placeholder').classList.add('hidden');
+                        document.getElementById('b-base64').value = editData.foto;
+                    }
+                } else if (type === 'peralatan') {
+                    document.getElementById('title-form-peralatan').innerText = "Edit Data Peralatan";
+                    document.getElementById('p-id').value = editId;
+                    ['nama', 'merk', 'kode', 'register', 'ukuran', 'warna', 'bahan', 'norangka', 'nomesin', 'tahunbuat', 'tahunbeli', 'asal', 'harga', 'kondisi', 'lokasi'].forEach(k => {
+                        const dbKey = { 'kode': 'kodeBarang', 'norangka': 'noRangka', 'nomesin': 'noMesin', 'tahunbuat': 'tahunBuat', 'tahunbeli': 'tahunBeli', 'asal': 'asalUsul' }[k] || k;
+                        if(document.getElementById('p-' + k)) document.getElementById('p-' + k).value = editData[dbKey] || '';
+                    });
+                    if (editData.foto) {
+                        document.getElementById('p-preview').src = editData.foto;
+                        document.getElementById('p-preview').classList.remove('hidden');
+                        document.getElementById('p-placeholder').classList.add('hidden');
+                        document.getElementById('p-base64').value = editData.foto;
+                    }
+                }
             } else { resetForm(type); }
         }
 
@@ -1312,17 +1339,37 @@
                 payloadData.foto = document.getElementById('t-base64').value; payloadData.foto2 = document.getElementById('t-base64-2').value;
                 payloadData.buktiSppt = document.getElementById('t-base64-sppt').value; payloadData.buktiUkur = document.getElementById('t-base64-ukur').value;
                 payloadData.buktiBatas = document.getElementById('t-base64-batas').value; payloadData.buktiSertifikat = document.getElementById('t-base64-sertifikat').value;
+            } else if (kategori === 'Bangunan') {
+                ['nama', 'kode', 'register', 'luas', 'lantai', 'alamat', 'konstruksi', 'kondisi', 'noimb', 'tglimb', 'tahunbuat', 'tahunbeli', 'asal', 'nilai', 'koordinat'].forEach(k => {
+                    const dbKey = { 'kode': 'kodeBarang', 'noimb': 'noImb', 'tglimb': 'tglImb', 'tahunbuat': 'tahunBuat', 'tahunbeli': 'tahunBeli', 'asal': 'asalUsul' }[k] || k;
+                    payloadData[dbKey] = document.getElementById('b-' + k).value;
+                });
+                payloadData.foto = document.getElementById('b-base64').value;
+            } else if (kategori === 'Peralatan') {
+                ['nama', 'merk', 'kode', 'register', 'ukuran', 'warna', 'bahan', 'norangka', 'nomesin', 'tahunbuat', 'tahunbeli', 'asal', 'harga', 'kondisi', 'lokasi'].forEach(k => {
+                    const dbKey = { 'kode': 'kodeBarang', 'norangka': 'noRangka', 'nomesin': 'noMesin', 'tahunbuat': 'tahunBuat', 'tahunbeli': 'tahunBeli', 'asal': 'asalUsul' }[k] || k;
+                    payloadData[dbKey] = document.getElementById('p-' + k).value;
+                });
+                payloadData.foto = document.getElementById('p-base64').value;
             }
 
             try {
                 const actionType = editId ? "update" : "insert";
-                const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: actionType, id: editId, data: payloadData }) });
+                // PERBAIKAN: Penambahan header "text/plain" mencegah Browser memblokir POST
+                const res = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: actionType, id: editId, data: payloadData }) 
+                });
                 const result = await res.json();
                 if(result.status === 'success') {
                     showToast(editId ? 'Diperbarui!' : 'Disimpan!', 'success');
                     resetForm(kategori.toLowerCase()); fetchData(); openLaporan(kategori);
                 }
-            } catch (err) { showToast('Gagal terhubung ke Server.', 'error'); } 
+            } catch (err) { 
+                console.error("Fetch Error Detail:", err);
+                showToast('Gagal terhubung ke Server. Pastikan Script Aksesnya "Anyone"', 'error'); 
+            } 
             finally { btn.innerHTML = oriBtn; btn.disabled = false; }
         }
 
@@ -1410,9 +1457,16 @@
             if(!itemToDelete) return;
             closeDeleteModal(); showToast('Menghapus...', 'warning');
             try {
-                const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: "delete", id: itemToDelete }) });
+                const res = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: "delete", id: itemToDelete }) 
+                });
                 if((await res.json()).status === 'success') { showToast('Data terhapus!', 'success'); fetchData(); }
-            } catch(e) { showToast('Gagal menghapus', 'error'); }
+            } catch(e) { 
+                console.error("Delete Error Detail:", e);
+                showToast('Gagal menghapus ke Server', 'error'); 
+            }
         });
 
         function updateStats() {

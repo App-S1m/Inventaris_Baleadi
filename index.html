@@ -178,7 +178,7 @@
     <div id="public-section" class="fixed inset-0 z-[60] bg-gray-50 flex flex-col overflow-hidden">
         
         <!-- Header / Hero Section -->
-        <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 pt-10 pb-28 px-4 relative flex-shrink-0 shadow-lg">
+        <div class="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 pt-10 pb-12 px-4 relative flex-shrink-0 shadow-lg z-30">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none"></div>
             
             <!-- Tombol Login Admin Pojok Kanan Atas -->
@@ -209,15 +209,15 @@
         </div>
 
         <!-- Hasil Pencarian Area -->
-        <div class="flex-1 overflow-y-auto px-4 -mt-16 relative z-20 pb-10">
+        <div class="flex-1 overflow-y-auto px-4 py-8 relative z-20 bg-gray-50">
             <div class="max-w-5xl mx-auto">
-                <div id="public-loading" class="bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+                <div id="public-loading" class="bg-white rounded-2xl shadow-md p-12 text-center border border-gray-100">
                     <i class="fas fa-circle-notch fa-spin text-4xl text-emerald-500 mb-4"></i>
                     <h3 class="text-lg font-bold text-gray-800">Menghubungkan ke Database...</h3>
                     <p class="text-gray-500 text-sm">Harap tunggu sebentar.</p>
                 </div>
 
-                <div id="public-empty" class="hidden bg-white rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+                <div id="public-empty" class="hidden bg-white rounded-2xl shadow-md p-12 text-center border border-gray-100">
                     <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
                         <i class="fas fa-folder-open text-3xl text-gray-300"></i>
                     </div>
@@ -225,7 +225,7 @@
                     <p class="text-gray-500 text-sm mt-1">Gunakan kata kunci lain atau periksa kembali ejaan Anda.</p>
                 </div>
 
-                <div id="public-table-container" class="hidden bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div id="public-table-container" class="hidden bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                     <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                         <h3 class="font-bold text-gray-800 text-sm tracking-wide uppercase">Hasil Pencarian KIB Publik</h3>
                         <span id="public-count" class="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">0 Data</span>
